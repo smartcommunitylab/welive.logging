@@ -7,6 +7,8 @@ public class LogMsg {
 	private String appId;
 	private String type;
 	private String msg;
+	private double duration;
+	private String session;
 	private long timestamp;
 
 	public String getAppId() {
@@ -60,6 +62,22 @@ public class LogMsg {
 		}
 
 		return res;
+	}
+
+	public double getDuration() {
+		return duration;
+	}
+
+	public void setDuration(double duration) {
+		this.duration = duration;
+	}
+
+	public String getSession() {
+		return session;
+	}
+
+	public void setSession(String session) {
+		this.session = session;
 	}
 
 }
