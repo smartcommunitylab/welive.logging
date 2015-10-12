@@ -3,6 +3,7 @@ package it.smartcommunitylab.welive.logging.controller;
 import it.smartcommunitylab.welive.logging.manager.GraylogConnector;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class WrapperController {
+
+	private static final Logger logger = Logger
+			.getLogger(GraylogConnector.class);
 
 	@Autowired
 	private GraylogConnector connector;
@@ -23,7 +27,7 @@ public class WrapperController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/status")
 	public String echo(@PathVariable String message) {
-		return "application running";
+		return "Yes I'm up and running!!!";
 	}
 
 }
