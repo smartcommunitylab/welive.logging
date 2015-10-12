@@ -23,8 +23,11 @@ public class WrapperController {
 	@Autowired
 	private GraylogConnector connector;
 
-	@RequestMapping(method = RequestMethod.POST, value = "/log")
-	public void pushLog(@RequestBody LogMsg payload) {
+	@RequestMapping(method = RequestMethod.POST, value = "/log/{appId}")
+	public void pushLog(@RequestBody LogMsg payload, @PathVariable String appId) {
+
+		// appId in path has priority
+		payload.setAppId(appId);
 		connector.storeLog(payload);
 	}
 
