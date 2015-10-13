@@ -41,17 +41,8 @@ public class WrapperController {
 	public List<LogMsg> query(@PathVariable String appId,
 			@RequestParam(required = false) String from,
 			@RequestParam(required = false) String to,
-			@RequestParam(required = true) String type,
-			@RequestParam(required = false) String pattern) {
-		return null;
-	}
-
-	// paginable
-	@RequestMapping(method = RequestMethod.GET, value = "/log/{appId}")
-	public List<LogMsg> queryByMessage(@PathVariable String appId,
-			@RequestParam(required = false) String from,
-			@RequestParam(required = false) String to,
-			@RequestParam(required = true) String type,
+			@RequestParam(required = false) String type,
+			@RequestParam(required = false) String pattern,
 			@RequestParam(required = false) String msgPattern) {
 		return null;
 	}
@@ -65,17 +56,8 @@ public class WrapperController {
 	public String countQuery(@PathVariable String appId,
 			@RequestParam(required = false) String from,
 			@RequestParam(required = false) String to,
-			@RequestParam(required = true) String type,
-			@RequestParam(required = false) String pattern) {
-
-		return null;
-	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "/log/count/{appId}")
-	public String countQueryByMessage(@PathVariable String appId,
-			@RequestParam(required = false) String from,
-			@RequestParam(required = false) String to,
-			@RequestParam(required = true) String type,
+			@RequestParam(required = false) String type,
+			@RequestParam(required = false) String pattern,
 			@RequestParam(required = false) String msgPattern) {
 
 		return null;
@@ -89,18 +71,8 @@ public class WrapperController {
 	public List<LogMsg> facetQuery(@PathVariable String appId,
 			@RequestParam(required = false) String from,
 			@RequestParam(required = false) String to,
-			@RequestParam(required = true) String type,
-			@RequestParam(required = false) String pattern) {
-
-		// period Values -> daily,weekly,monthly,by-session
-		return null;
-	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "/log/{appId}/{period}")
-	public List<LogMsg> facetQueryByMessage(@PathVariable String appId,
-			@RequestParam(required = false) String from,
-			@RequestParam(required = false) String to,
-			@RequestParam(required = true) String type,
+			@RequestParam(required = false) String type,
+			@RequestParam(required = false) String pattern,
 			@RequestParam(required = false) String msgPattern) {
 
 		// period Values -> daily,weekly,monthly,by-session
