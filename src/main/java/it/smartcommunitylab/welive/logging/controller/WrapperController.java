@@ -44,8 +44,8 @@ public class WrapperController {
 	// paginable
 	@RequestMapping(method = RequestMethod.GET, value = "/log/{appId}")
 	public List<LogMsg> query(@PathVariable String appId,
-			@RequestParam(required = false) String from,
-			@RequestParam(required = false) String to,
+			@RequestParam(required = false) Long from,
+			@RequestParam(required = false) Long to,
 			@RequestParam(required = false) String type,
 			@RequestParam(required = false) String pattern,
 			@RequestParam(required = false) String msgPattern) {
@@ -59,8 +59,8 @@ public class WrapperController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/log/count/{appId}")
 	public String countQuery(@PathVariable String appId,
-			@RequestParam(required = false) String from,
-			@RequestParam(required = false) String to,
+			@RequestParam(required = false) Long from,
+			@RequestParam(required = false) Long to,
 			@RequestParam(required = false) String type,
 			@RequestParam(required = false) String pattern,
 			@RequestParam(required = false) String msgPattern) {
@@ -74,8 +74,8 @@ public class WrapperController {
 
 	@RequestMapping(method = RequestMethod.GET, value = "/log/{appId}/{period}")
 	public List<LogMsg> facetQuery(@PathVariable String appId,
-			@RequestParam(required = false) String from,
-			@RequestParam(required = false) String to,
+			@RequestParam(required = false) Long from,
+			@RequestParam(required = false) Long to,
 			@RequestParam(required = false) String type,
 			@RequestParam(required = false) String pattern,
 			@RequestParam(required = false) String msgPattern) {

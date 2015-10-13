@@ -3,6 +3,9 @@ package it.smartcommunitylab.welive.logging.manager;
 import it.smartcommunitylab.welive.logging.config.AppConfig;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
@@ -22,9 +25,12 @@ public class GraylogConnectorTest {
 	private GraylogConnector connector;
 
 	@Test
-	public void query() {
-		List<LogMsg> res = connector.query("appId:9001 AND myfield:10",
-				"2015-09-01T09:22:50.392Z", "2015-10-08T09:22:50.392Z");
+	public void query() throws ParseException {
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+		List<LogMsg> res = connector.query("type:AppCustom",
+				formatter.parse("2015-10-12 13:50").getTime(),
+				formatter.parse("2015-10-13 13:50").getTime());
 		System.out.println(res.size());
 		Assertions.assertThat(res).hasAtLeastOneElementOfType(LogMsg.class);
 	}

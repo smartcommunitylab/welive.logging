@@ -4,6 +4,7 @@ import it.smartcommunitylab.welive.logging.model.LogMsg;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,11 +71,11 @@ public class GraylogConnector {
 				Map.class);
 	}
 
-	public List<LogMsg> query(String query, String fromTs, String toTs) {
+	public List<LogMsg> query(String query, long fromTs, long toTs) {
 		Map<String, Object> queryParams = new HashMap<String, Object>();
 		queryParams.put("query", query);
-		queryParams.put("from", fromTs);
-		queryParams.put("to", toTs);
+		queryParams.put("from", dateFormatter.format(new Date(fromTs)));
+		queryParams.put("to", dateFormatter.format(new Date(toTs)));
 		queryParams.put("fields", fieldsToRetrieve);
 
 		@SuppressWarnings("rawtypes")
