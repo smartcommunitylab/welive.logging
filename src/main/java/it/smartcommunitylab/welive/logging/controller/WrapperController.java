@@ -28,6 +28,11 @@ public class WrapperController {
 
 		// appId in path has priority
 		payload.setAppId(appId);
+
+		// check type
+		if (!payload.isTypeValid()) {
+			payload.setType(LogMsg.DEFAULT_TYPE);
+		}
 		connector.storeLog(payload);
 	}
 

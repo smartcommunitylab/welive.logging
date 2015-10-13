@@ -3,6 +3,9 @@ package it.smartcommunitylab.welive.logging.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
 public class LogMsg {
 	private String appId;
 	private String type;
@@ -43,6 +46,11 @@ public class LogMsg {
 		this.timestamp = timestamp;
 	}
 
+	public boolean isTypeValid() {
+		return !StringUtils.isBlank(type)
+				&& ArrayUtils.contains(validTypes, type);
+	}
+
 	public Map<String, Object> toGraylogFormat() {
 		Map<String, Object> res = new HashMap<String, Object>();
 		if (appId != null) {
@@ -80,4 +88,10 @@ public class LogMsg {
 		this.session = session;
 	}
 
+	private static final String[] validTypes = new String[] { "AppStart",
+			"AppStop", "AppLogin", "AppConsume", "AppProsume", "AppODConsume",
+			"AppCollaborate", "AppDataQueryInitiate", "AppDataQueryComplete",
+			"AppDataQueryError", "AppQuestionnaire" };
+
+	public static final String DEFAULT_TYPE = "AppCustom";
 }

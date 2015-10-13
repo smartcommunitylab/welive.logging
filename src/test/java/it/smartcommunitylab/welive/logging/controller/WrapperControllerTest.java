@@ -63,6 +63,33 @@ public class WrapperControllerTest {
 
 	}
 
+	@Test
+	public void storeLogInvalidType() throws Exception {
+		final String appId = "wer123";
+
+		LogMsg msg = new LogMsg();
+		msg.setMsg("log with invalid type");
+
+		mockMvc.perform(
+				post("/log/{appId}", appId).contentType("application/json")
+						.content(toJson(msg))).andExpect(status().isOk());
+
+	}
+
+	@Test
+	public void storeLogvalidType() throws Exception {
+		final String appId = "wer123";
+
+		LogMsg msg = new LogMsg();
+		msg.setMsg("appstart logging");
+		msg.setType("AppStart");
+
+		mockMvc.perform(
+				post("/log/{appId}", appId).contentType("application/json")
+						.content(toJson(msg))).andExpect(status().isOk());
+
+	}
+
 	private String toJson(Object o) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(o);
