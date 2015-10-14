@@ -66,7 +66,7 @@ public class GraylogConnector {
 
 	}
 
-	public void storeLog(LogMsg msg) {
+	public void pushLog(LogMsg msg) {
 		restClient.postForObject(graylogEndpoint, msg.toGraylogFormat(),
 				Map.class);
 	}

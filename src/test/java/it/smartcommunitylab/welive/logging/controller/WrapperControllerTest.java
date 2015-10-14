@@ -1,9 +1,12 @@
 package it.smartcommunitylab.welive.logging.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import it.smartcommunitylab.welive.logging.config.AppConfig;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
+
+import java.util.GregorianCalendar;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -90,8 +93,63 @@ public class WrapperControllerTest {
 
 	}
 
+	@Test
+	public void query() throws Exception {
+		final String appId = "wer123";
+		mockMvc.perform(get("/log/{appId}", appId).param("type", "AppStart"))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void querySetFrom() throws Exception {
+		final String appId = "wer123";
+
+		long from = new GregorianCalendar(2015, 8, 28).getTimeInMillis();
+		mockMvc.perform(
+				get("/log/{appId}", appId).param("from", Long.toString(from)))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void querySetTo() throws Exception {
+		final String appId = "wer123";
+
+		long to = new GregorianCalendar(2015, 9, 02).getTimeInMillis();
+		mockMvc.perform(
+				get("/log/{appId}", appId).param("to", Long.toString(to)))
+				.andExpect(status().isOk());
+	}
+
+	@Test
+	public void querySetFromTo() throws Exception {
+		final String appId = "wer123";
+
+		long from = new GregorianCalendar(2015, 9, 10).getTimeInMillis();
+		long to = new GregorianCalendar(2015, 9, 13).getTimeInMillis();
+		mockMvc.perform(
+				get("/log/{appId}", appId).param("from", Long.toString(from))
+						.param("to", Long.toString(to))).andExpect(
+				status().isOk());
+	}
+
+	@Test
+	public void queryComplete() throws Exception {
+		final String appId = "wer123";
+
+		long from = new GregorianCalendar(2015, 9, 10).getTimeInMillis();
+		long to = new GregorianCalendar(2015, 9, 14).getTimeInMillis();
+		mockMvc.perform(
+				get("/log/{appId}", appId).param("from", Long.toString(from))
+						.param("to", Long.toString(to))
+						.param("type", "AppStart")
+						.param("msgPattern", "logging")
+						.param("pattern", "source: 10.0.2.2")).andExpect(
+				status().isOk());
+	}
+
 	private String toJson(Object o) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(o);
 	}
+
 }
