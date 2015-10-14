@@ -1,5 +1,6 @@
 package it.smartcommunitylab.welive.logging.manager;
 
+import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 
 import java.text.SimpleDateFormat;
@@ -40,6 +41,7 @@ public class GraylogConnector {
 
 	private static final String JSON_MESSAGES_FIELD = "messages";
 	private static final String JSON_MESSAGE_FIELD = "message";
+	private static final String JSON_TOT_RESULTS_FIELD = "total_results";
 
 	private static final String[] FIELDS_REQUESTED = new String[] { "appId",
 			"type", "message", "timestamp" };
@@ -72,6 +74,24 @@ public class GraylogConnector {
 	}
 
 	public List<LogMsg> query(String query, long fromTs, long toTs) {
+		Map<String, Object> responseObj = graylogQuery(query, fromTs, toTs);
+
+		@SuppressWarnings("unchecked")
+		List<Map<String, Object>> msgs = (List<Map<String, Object>>) responseObj
+				.get(JSON_MESSAGES_FIELD);
+		return convert(msgs);
+	}
+
+	public Counter queryCount(String query, long fromTs, long toTs) {
+		Map<String, Object> responseObj = graylogQuery(query, fromTs, toTs);
+
+		Integer count = (Integer) responseObj.get(JSON_TOT_RESULTS_FIELD);
+		return new Counter(count);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> graylogQuery(String query, long fromTs,
+			long toTs) {
 		Map<String, Object> queryParams = new HashMap<String, Object>();
 		queryParams.put("query", query);
 		queryParams.put("from", dateFormatter.format(new Date(fromTs)));
@@ -83,11 +103,8 @@ public class GraylogConnector {
 				+ "?query={query}&from={from}&to={to}&fields={fields}",
 				Map.class, queryParams);
 
-		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> msgs = (List<Map<String, Object>>) resp
-				.getBody().get(JSON_MESSAGES_FIELD);
+		return (Map<String, Object>) resp.getBody();
 
-		return convert(msgs);
 	}
 
 	List<LogMsg> convert(List<Map<String, Object>> list) {

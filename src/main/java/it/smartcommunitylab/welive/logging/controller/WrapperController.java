@@ -2,6 +2,7 @@ package it.smartcommunitylab.welive.logging.controller;
 
 import it.smartcommunitylab.welive.logging.manager.GraylogConnector;
 import it.smartcommunitylab.welive.logging.manager.LogManager;
+import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 
 import java.util.List;
@@ -54,14 +55,15 @@ public class WrapperController {
 	 */
 
 	@RequestMapping(method = RequestMethod.GET, value = "/log/count/{appId}")
-	public String countQuery(@PathVariable String appId,
+	public Counter countQuery(@PathVariable String appId,
 			@RequestParam(required = false) Long from,
 			@RequestParam(required = false) Long to,
 			@RequestParam(required = false) String type,
 			@RequestParam(required = false) String pattern,
 			@RequestParam(required = false) String msgPattern) {
 
-		return null;
+		return logManager
+				.queryCount(appId, from, to, type, msgPattern, pattern);
 	}
 
 	/**

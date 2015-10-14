@@ -1,5 +1,6 @@
 package it.smartcommunitylab.welive.logging.manager;
 
+import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 
 import java.text.Format;
@@ -46,6 +47,13 @@ public class LogManager {
 		Long[] ts = timestampCheck(from, to);
 		String q = patternConstructor(appId, msgPattern, type, pattern);
 		return connector.query(q, ts[0], ts[1]);
+	}
+
+	public Counter queryCount(String appId, Long from, Long to, String type,
+			String msgPattern, String pattern) {
+		Long[] ts = timestampCheck(from, to);
+		String q = patternConstructor(appId, msgPattern, type, pattern);
+		return connector.queryCount(q, ts[0], ts[1]);
 	}
 
 	private static final String[] validTypes = new String[] { "AppStart",
