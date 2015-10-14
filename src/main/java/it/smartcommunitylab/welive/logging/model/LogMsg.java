@@ -3,14 +3,15 @@ package it.smartcommunitylab.welive.logging.model;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
+@JsonInclude(Include.NON_NULL)
 public class LogMsg {
 	private String appId;
 	private String type;
 	private String msg;
-	private double duration;
+	private Double duration;
 	private String session;
 	private long timestamp;
 
@@ -46,11 +47,6 @@ public class LogMsg {
 		this.timestamp = timestamp;
 	}
 
-	public boolean isTypeValid() {
-		return !StringUtils.isBlank(type)
-				&& ArrayUtils.contains(validTypes, type);
-	}
-
 	public Map<String, Object> toGraylogFormat() {
 		Map<String, Object> res = new HashMap<String, Object>();
 		if (appId != null) {
@@ -72,11 +68,11 @@ public class LogMsg {
 		return res;
 	}
 
-	public double getDuration() {
+	public Double getDuration() {
 		return duration;
 	}
 
-	public void setDuration(double duration) {
+	public void setDuration(Double duration) {
 		this.duration = duration;
 	}
 
@@ -88,10 +84,4 @@ public class LogMsg {
 		this.session = session;
 	}
 
-	private static final String[] validTypes = new String[] { "AppStart",
-			"AppStop", "AppLogin", "AppConsume", "AppProsume", "AppODConsume",
-			"AppCollaborate", "AppDataQueryInitiate", "AppDataQueryComplete",
-			"AppDataQueryError", "AppQuestionnaire" };
-
-	public static final String DEFAULT_TYPE = "AppCustom";
 }

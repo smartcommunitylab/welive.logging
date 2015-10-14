@@ -11,6 +11,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +35,8 @@ public class LogManager {
 
 	public void saveLog(LogMsg msg) {
 		// check type
-		if (!msg.isTypeValid()) {
-			msg.setType(LogMsg.DEFAULT_TYPE);
+		if (!isTypeValid(msg)) {
+			msg.setType(DEFAULT_TYPE);
 		}
 		connector.pushLog(msg);
 	}
@@ -45,6 +46,18 @@ public class LogManager {
 		Long[] ts = timestampCheck(from, to);
 		String q = patternConstructor(appId, msgPattern, type, pattern);
 		return connector.query(q, ts[0], ts[1]);
+	}
+
+	private static final String[] validTypes = new String[] { "AppStart",
+			"AppStop", "AppLogin", "AppConsume", "AppProsume", "AppODConsume",
+			"AppCollaborate", "AppDataQueryInitiate", "AppDataQueryComplete",
+			"AppDataQueryError", "AppQuestionnaire" };
+
+	private static final String DEFAULT_TYPE = "AppCustom";
+
+	public boolean isTypeValid(LogMsg msg) {
+		return !StringUtils.isBlank(msg.getType())
+				&& ArrayUtils.contains(validTypes, msg.getType());
 	}
 
 	private Long[] timestampCheck(Long from, Long to) {
