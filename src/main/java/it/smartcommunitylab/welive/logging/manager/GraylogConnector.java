@@ -2,7 +2,9 @@ package it.smartcommunitylab.welive.logging.manager;
 
 import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
+import it.smartcommunitylab.welive.logging.model.Pagination;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +22,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class GraylogConnector {
@@ -42,6 +46,7 @@ public class GraylogConnector {
 	private static final String JSON_MESSAGES_FIELD = "messages";
 	private static final String JSON_MESSAGE_FIELD = "message";
 	private static final String JSON_TOT_RESULTS_FIELD = "total_results";
+	private static final String JSON_ELASTIC_QUERY_FIELD = "built_query";
 
 	private static final String[] FIELDS_REQUESTED = new String[] { "appId",
 			"type", "message", "timestamp" };
@@ -73,35 +78,60 @@ public class GraylogConnector {
 				Map.class);
 	}
 
-	public List<LogMsg> query(String query, long fromTs, long toTs) {
-		Map<String, Object> responseObj = graylogQuery(query, fromTs, toTs);
+	public Pagination query(String query, long fromTs, long toTs,
+			Integer limit, Integer offset) {
+		Map<String, Object> responseObj = graylogQuery(query, fromTs, toTs,
+				limit, offset);
 
-		@SuppressWarnings("unchecked")
-		List<Map<String, Object>> msgs = (List<Map<String, Object>>) responseObj
-				.get(JSON_MESSAGES_FIELD);
-		return convert(msgs);
+		return paginate(responseObj);
 	}
 
 	public Counter queryCount(String query, long fromTs, long toTs) {
-		Map<String, Object> responseObj = graylogQuery(query, fromTs, toTs);
+		Map<String, Object> responseObj = graylogQuery(query, fromTs, toTs,
+				null, null);
 
 		Integer count = (Integer) responseObj.get(JSON_TOT_RESULTS_FIELD);
 		return new Counter(count);
 	}
 
 	@SuppressWarnings("unchecked")
+	private Pagination paginate(Map<String, Object> resp) {
+		Pagination p = new Pagination();
+		List<Map<String, Object>> msgs = (List<Map<String, Object>>) resp
+				.get(JSON_MESSAGES_FIELD);
+		p.setData(convert(msgs));
+		p.setTotalResults((Integer) resp.get(JSON_TOT_RESULTS_FIELD));
+		String builtQuery = (String) resp.get(JSON_ELASTIC_QUERY_FIELD);
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> res;
+		try {
+			res = mapper.readValue(builtQuery, Map.class);
+			p.setLimit((Integer) res.get("size"));
+			p.setOffset((Integer) res.get("from"));
+		} catch (IOException e) {
+			logger.error("Exception parsing built_query field of graylog response");
+		}
+
+		return p;
+	}
+
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> graylogQuery(String query, long fromTs,
-			long toTs) {
+			long toTs, Integer limit, Integer offset) {
 		Map<String, Object> queryParams = new HashMap<String, Object>();
 		queryParams.put("query", query);
 		queryParams.put("from", dateFormatter.format(new Date(fromTs)));
 		queryParams.put("to", dateFormatter.format(new Date(toTs)));
 		queryParams.put("fields", fieldsToRetrieve);
+		queryParams.put("offset", offset);
+		queryParams.put("limit", limit);
 
 		@SuppressWarnings("rawtypes")
-		ResponseEntity<Map> resp = restClient.getForEntity(queryEndpoint
-				+ "?query={query}&from={from}&to={to}&fields={fields}",
-				Map.class, queryParams);
+		ResponseEntity<Map> resp = restClient
+				.getForEntity(
+						queryEndpoint
+								+ "?query={query}&from={from}&to={to}&fields={fields}&limit={limit}&offset={offset}",
+						Map.class, queryParams);
 
 		return (Map<String, Object>) resp.getBody();
 

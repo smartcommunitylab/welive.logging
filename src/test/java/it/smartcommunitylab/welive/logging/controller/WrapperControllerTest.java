@@ -143,8 +143,8 @@ public class WrapperControllerTest {
 						.param("to", Long.toString(to))
 						.param("type", "AppStart")
 						.param("msgPattern", "logging")
-						.param("pattern", "source: 10.0.2.2")).andExpect(
-				status().isOk());
+						.param("pattern", "source: 10.0.2.2")
+						.param("offset", "14")).andExpect(status().isOk());
 	}
 
 	private String toJson(Object o) throws JsonProcessingException {

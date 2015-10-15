@@ -4,6 +4,7 @@ import it.smartcommunitylab.welive.logging.manager.GraylogConnector;
 import it.smartcommunitylab.welive.logging.manager.LogManager;
 import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
+import it.smartcommunitylab.welive.logging.model.Pagination;
 
 import java.util.List;
 
@@ -40,13 +41,16 @@ public class WrapperController {
 
 	// paginable
 	@RequestMapping(method = RequestMethod.GET, value = "/log/{appId}")
-	public List<LogMsg> query(@PathVariable String appId,
+	public Pagination query(@PathVariable String appId,
 			@RequestParam(required = false) Long from,
 			@RequestParam(required = false) Long to,
 			@RequestParam(required = false) String type,
 			@RequestParam(required = false) String pattern,
-			@RequestParam(required = false) String msgPattern) {
-		return logManager.query(appId, from, to, type, msgPattern, pattern);
+			@RequestParam(required = false) String msgPattern,
+			@RequestParam(required = false) Integer limit,
+			@RequestParam(required = false) Integer offset) {
+		return logManager.query(appId, from, to, type, msgPattern, pattern,
+				limit, offset);
 	}
 
 	/**

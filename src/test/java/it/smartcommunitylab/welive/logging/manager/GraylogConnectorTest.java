@@ -2,11 +2,11 @@ package it.smartcommunitylab.welive.logging.manager;
 
 import it.smartcommunitylab.welive.logging.config.AppConfig;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
+import it.smartcommunitylab.welive.logging.model.Pagination;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
@@ -28,10 +28,11 @@ public class GraylogConnectorTest {
 	public void query() throws ParseException {
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-		List<LogMsg> res = connector.query("type:AppCustom",
+		Pagination res = connector.query("type:AppCustom",
 				formatter.parse("2015-10-12 13:50").getTime(),
-				formatter.parse("2015-10-13 13:50").getTime());
-		System.out.println(res.size());
-		Assertions.assertThat(res).hasAtLeastOneElementOfType(LogMsg.class);
+				formatter.parse("2015-10-13 13:50").getTime(), null, null);
+		System.out.println(res.getData().size());
+		Assertions.assertThat(res.getData()).hasAtLeastOneElementOfType(
+				LogMsg.class);
 	}
 }

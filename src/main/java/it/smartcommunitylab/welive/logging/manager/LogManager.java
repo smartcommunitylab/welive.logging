@@ -2,13 +2,13 @@ package it.smartcommunitylab.welive.logging.manager;
 
 import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
+import it.smartcommunitylab.welive.logging.model.Pagination;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 
 import javax.annotation.PostConstruct;
 
@@ -42,11 +42,11 @@ public class LogManager {
 		connector.pushLog(msg);
 	}
 
-	public List<LogMsg> query(String appId, Long from, Long to, String type,
-			String msgPattern, String pattern) {
+	public Pagination query(String appId, Long from, Long to, String type,
+			String msgPattern, String pattern, Integer limit, Integer offset) {
 		Long[] ts = timestampCheck(from, to);
 		String q = patternConstructor(appId, msgPattern, type, pattern);
-		return connector.query(q, ts[0], ts[1]);
+		return connector.query(q, ts[0], ts[1], limit, offset);
 	}
 
 	public Counter queryCount(String appId, Long from, Long to, String type,
