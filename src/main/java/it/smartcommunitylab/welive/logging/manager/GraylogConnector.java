@@ -5,6 +5,7 @@ import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
 
 import java.io.IOException;
+import java.rmi.ServerException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +22,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,14 +81,15 @@ public class GraylogConnector {
 	}
 
 	public Pagination query(String query, long fromTs, long toTs,
-			Integer limit, Integer offset) {
+			Integer limit, Integer offset) throws ServerException {
 		Map<String, Object> responseObj = graylogQuery(query, fromTs, toTs,
 				limit, offset);
 
 		return paginate(responseObj);
 	}
 
-	public Counter queryCount(String query, long fromTs, long toTs) {
+	public Counter queryCount(String query, long fromTs, long toTs)
+			throws ServerException {
 		Map<String, Object> responseObj = graylogQuery(query, fromTs, toTs,
 				null, null);
 
@@ -117,7 +120,7 @@ public class GraylogConnector {
 
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> graylogQuery(String query, long fromTs,
-			long toTs, Integer limit, Integer offset) {
+			long toTs, Integer limit, Integer offset) throws ServerException {
 		Map<String, Object> queryParams = new HashMap<String, Object>();
 		queryParams.put("query", query);
 		queryParams.put("from", dateFormatter.format(new Date(fromTs)));
@@ -126,14 +129,19 @@ public class GraylogConnector {
 		queryParams.put("offset", offset);
 		queryParams.put("limit", limit);
 
-		@SuppressWarnings("rawtypes")
-		ResponseEntity<Map> resp = restClient
-				.getForEntity(
-						queryEndpoint
-								+ "?query={query}&from={from}&to={to}&fields={fields}&limit={limit}&offset={offset}",
-						Map.class, queryParams);
-
-		return (Map<String, Object>) resp.getBody();
+		try {
+			@SuppressWarnings("rawtypes")
+			ResponseEntity<Map> resp = restClient
+					.getForEntity(
+							queryEndpoint
+									+ "?query={query}&from={from}&to={to}&fields={fields}&limit={limit}&offset={offset}",
+							Map.class, queryParams);
+			return (Map<String, Object>) resp.getBody();
+		} catch (RestClientException e) {
+			logger.error(String.format("Graylog response error: %s call %s",
+					e.getMessage(), queryParams.toString()));
+			throw new ServerException(e.getMessage());
+		}
 
 	}
 

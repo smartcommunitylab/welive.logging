@@ -4,6 +4,7 @@ import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
 
+import java.rmi.ServerException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -43,14 +44,15 @@ public class LogManager {
 	}
 
 	public Pagination query(String appId, Long from, Long to, String type,
-			String msgPattern, String pattern, Integer limit, Integer offset) {
+			String msgPattern, String pattern, Integer limit, Integer offset)
+			throws ServerException {
 		Long[] ts = timestampCheck(from, to);
 		String q = patternConstructor(appId, msgPattern, type, pattern);
 		return connector.query(q, ts[0], ts[1], limit, offset);
 	}
 
 	public Counter queryCount(String appId, Long from, Long to, String type,
-			String msgPattern, String pattern) {
+			String msgPattern, String pattern) throws ServerException {
 		Long[] ts = timestampCheck(from, to);
 		String q = patternConstructor(appId, msgPattern, type, pattern);
 		return connector.queryCount(q, ts[0], ts[1]);

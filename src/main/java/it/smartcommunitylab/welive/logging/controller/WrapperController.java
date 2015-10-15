@@ -6,10 +6,15 @@ import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
 
+import java.io.IOException;
+import java.rmi.ServerException;
 import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +44,6 @@ public class WrapperController {
 		return "Yes I'm up and running!!!";
 	}
 
-	// paginable
 	@RequestMapping(method = RequestMethod.GET, value = "/log/{appId}")
 	public Pagination query(@PathVariable String appId,
 			@RequestParam(required = false) Long from,
@@ -48,7 +52,8 @@ public class WrapperController {
 			@RequestParam(required = false) String pattern,
 			@RequestParam(required = false) String msgPattern,
 			@RequestParam(required = false) Integer limit,
-			@RequestParam(required = false) Integer offset) {
+			@RequestParam(required = false) Integer offset)
+			throws ServerException {
 		return logManager.query(appId, from, to, type, msgPattern, pattern,
 				limit, offset);
 	}
@@ -56,6 +61,8 @@ public class WrapperController {
 	/**
 	 * 
 	 * count
+	 * 
+	 * @throws ServerException
 	 */
 
 	@RequestMapping(method = RequestMethod.GET, value = "/log/count/{appId}")
@@ -64,7 +71,8 @@ public class WrapperController {
 			@RequestParam(required = false) Long to,
 			@RequestParam(required = false) String type,
 			@RequestParam(required = false) String pattern,
-			@RequestParam(required = false) String msgPattern) {
+			@RequestParam(required = false) String msgPattern)
+			throws ServerException {
 
 		return logManager
 				.queryCount(appId, from, to, type, msgPattern, pattern);
@@ -73,7 +81,7 @@ public class WrapperController {
 	/**
 	 * Facet search
 	 */
-
+	// TODO
 	@RequestMapping(method = RequestMethod.GET, value = "/log/{appId}/{period}")
 	public List<LogMsg> facetQuery(@PathVariable String appId,
 			@RequestParam(required = false) Long from,
@@ -86,4 +94,10 @@ public class WrapperController {
 		return null;
 	}
 
+	@ExceptionHandler(value = ServerException.class)
+	public void handleServerException(HttpServletResponse resp, Exception e)
+			throws IOException {
+		resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+				"Exception calling graylog server: " + e.getMessage());
+	}
 }
