@@ -4,6 +4,7 @@ import it.smartcommunitylab.welive.logging.config.AppConfig;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
 
+import java.rmi.ServerException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -25,7 +26,7 @@ public class GraylogConnectorTest {
 	private GraylogConnector connector;
 
 	@Test
-	public void query() throws ParseException {
+	public void query() throws ParseException, ServerException {
 		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
 		Pagination res = connector.query("type:AppCustom",
