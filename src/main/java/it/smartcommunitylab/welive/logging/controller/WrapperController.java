@@ -40,7 +40,7 @@ public class WrapperController {
 	}
 
 	@RequestMapping(method = RequestMethod.GET, value = "/status")
-	public String echo(@PathVariable String message) {
+	public String echo() {
 		return "Yes I'm up and running!!!";
 	}
 
