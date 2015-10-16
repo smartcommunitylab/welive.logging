@@ -116,5 +116,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>welive.logging</finalName>
 	</build>
 </project>
