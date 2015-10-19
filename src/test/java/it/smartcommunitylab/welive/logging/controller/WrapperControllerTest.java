@@ -7,6 +7,8 @@ import it.smartcommunitylab.welive.logging.config.AppConfig;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -59,6 +61,10 @@ public class WrapperControllerTest {
 		LogMsg msg = new LogMsg();
 		msg.setType("AppCustom");
 		msg.setMsg("logging");
+		Map<String, Object> customAttr = new HashMap<>();
+		customAttr.put("rating", 1.2d);
+		customAttr.put("id", "aaa22");
+		msg.setCustomAttributes(customAttr);
 
 		mockMvc.perform(
 				post("/log/{appId}", appId).contentType("application/json")

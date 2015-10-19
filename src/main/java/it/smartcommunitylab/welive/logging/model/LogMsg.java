@@ -2,9 +2,11 @@ package it.smartcommunitylab.welive.logging.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(Include.NON_NULL)
 public class LogMsg {
@@ -14,6 +16,9 @@ public class LogMsg {
 	private Double duration;
 	private String session;
 	private long timestamp;
+
+	@JsonProperty(value = "custom_attr")
+	private Map<String, Object> customAttributes;
 
 	public String getAppId() {
 		return appId;
@@ -65,6 +70,11 @@ public class LogMsg {
 			res.put("short_message", msg);
 		}
 
+		if (customAttributes != null) {
+			for (Entry<String, Object> entry : customAttributes.entrySet()) {
+				res.put("_" + CUSTOM_PREFIX + entry.getKey(), entry.getValue());
+			}
+		}
 		return res;
 	}
 
@@ -84,4 +94,13 @@ public class LogMsg {
 		this.session = session;
 	}
 
+	public Map<String, Object> getCustomAttributes() {
+		return customAttributes;
+	}
+
+	public void setCustomAttributes(Map<String, Object> customAttributes) {
+		this.customAttributes = customAttributes;
+	}
+
+	private static final String CUSTOM_PREFIX = "custom_";
 }
