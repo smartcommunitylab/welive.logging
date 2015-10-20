@@ -7,9 +7,12 @@ import it.smartcommunitylab.welive.logging.model.Pagination;
 import java.rmi.ServerException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
@@ -28,6 +31,16 @@ public class LogManager {
 
 	@Autowired
 	private GraylogConnector connector;
+
+	private static final String[] validTypes = new String[] { "AppStart",
+			"AppStop", "AppLogin", "AppConsume", "AppProsume", "AppODConsume",
+			"AppCollaborate", "AppDataQueryInitiate", "AppDataQueryComplete",
+			"AppDataQueryError", "AppQuestionnaire" };
+
+	private static final String[] stdFields = new String[] { "appId",
+			"duration", "timestamp", "session", "msg", "type" };
+
+	private static final String DEFAULT_TYPE = "AppCustom";
 
 	@PostConstruct
 	@SuppressWarnings("unused")
@@ -57,13 +70,6 @@ public class LogManager {
 		String q = patternConstructor(appId, msgPattern, type, pattern);
 		return connector.queryCount(q, ts[0], ts[1]);
 	}
-
-	private static final String[] validTypes = new String[] { "AppStart",
-			"AppStop", "AppLogin", "AppConsume", "AppProsume", "AppODConsume",
-			"AppCollaborate", "AppDataQueryInitiate", "AppDataQueryComplete",
-			"AppDataQueryError", "AppQuestionnaire" };
-
-	private static final String DEFAULT_TYPE = "AppCustom";
 
 	public boolean isTypeValid(LogMsg msg) {
 		return !StringUtils.isBlank(msg.getType())
@@ -130,11 +136,30 @@ public class LogManager {
 			if (buf.length() > 0) {
 				buf.append(" AND ");
 			}
+
+			pattern = decorateCustomAttr(pattern);
 			buf.append(pattern);
 		}
 
 		logger.debug("graylog search pattern: " + buf.toString());
 		return buf.toString();
 
+	}
+
+	private String decorateCustomAttr(String pattern) {
+		if (pattern != null) {
+			Pattern p = Pattern.compile("\\w+:");
+			Matcher m = p.matcher(pattern);
+			while (m.find()) {
+				if (Arrays.binarySearch(stdFields, m.group()) < 0) {
+					logger.debug("hit custom field "
+							+ m.group().substring(0, m.group().length() - 1));
+					pattern = pattern.replace(m.group(), LogMsg.CUSTOM_PREFIX
+							+ m.group());
+				}
+			}
+		}
+
+		return pattern;
 	}
 }

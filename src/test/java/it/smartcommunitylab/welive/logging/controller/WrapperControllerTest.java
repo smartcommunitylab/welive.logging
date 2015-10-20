@@ -153,6 +153,20 @@ public class WrapperControllerTest {
 						.param("offset", "14")).andExpect(status().isOk());
 	}
 
+	@Test
+	public void queryCustomAttr() throws Exception {
+		final String appId = "wer123";
+
+		long from = new GregorianCalendar(2015, 9, 10).getTimeInMillis();
+		long to = new GregorianCalendar(2015, 9, 14).getTimeInMillis();
+		mockMvc.perform(
+				get("/log/{appId}", appId).param("from", Long.toString(from))
+						.param("to", Long.toString(to))
+						.param("msgPattern", "logging")
+						.param("pattern", "source: 10.0.2.2 rating:2.2")
+						.param("offset", "14")).andExpect(status().isOk());
+	}
+
 	private String toJson(Object o) throws JsonProcessingException {
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(o);

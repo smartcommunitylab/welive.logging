@@ -15,7 +15,6 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -43,15 +42,12 @@ public class GraylogConnector {
 	private String queryEndpoint;
 	private String adminUsername;
 	private String adminPassword;
-	private String fieldsToRetrieve;
 
 	private static final String JSON_MESSAGES_FIELD = "messages";
 	private static final String JSON_MESSAGE_FIELD = "message";
+	private static final String JSON_FIELDS_FIELD = "fields";
 	private static final String JSON_TOT_RESULTS_FIELD = "total_results";
 	private static final String JSON_ELASTIC_QUERY_FIELD = "built_query";
-
-	private static final String[] FIELDS_REQUESTED = new String[] { "appId",
-			"type", "message", "timestamp" };
 
 	private static final String ISO8601_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
@@ -70,7 +66,6 @@ public class GraylogConnector {
 		interceptors.add(new BasicAuthRequestInterceptor(adminUsername,
 				adminPassword));
 		restClient.setInterceptors(interceptors);
-		fieldsToRetrieve = StringUtils.join(FIELDS_REQUESTED, ",");
 		dateFormatter = new SimpleDateFormat(ISO8601_DATE_PATTERN);
 
 	}
@@ -102,7 +97,9 @@ public class GraylogConnector {
 		Pagination p = new Pagination();
 		List<Map<String, Object>> msgs = (List<Map<String, Object>>) resp
 				.get(JSON_MESSAGES_FIELD);
-		p.setData(convert(msgs));
+		List<String> customFields = extractCustomFields((List<String>) resp
+				.get(JSON_FIELDS_FIELD));
+		p.setData(convert(msgs, customFields));
 		p.setTotalResults((Integer) resp.get(JSON_TOT_RESULTS_FIELD));
 		String builtQuery = (String) resp.get(JSON_ELASTIC_QUERY_FIELD);
 		ObjectMapper mapper = new ObjectMapper();
@@ -118,6 +115,17 @@ public class GraylogConnector {
 		return p;
 	}
 
+	private List<String> extractCustomFields(List<String> fields) {
+		List<String> customFields = new ArrayList<>();
+		for (String f : fields) {
+			if (f.startsWith(LogMsg.CUSTOM_PREFIX)) {
+				customFields.add(f);
+			}
+		}
+
+		return customFields;
+	}
+
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> graylogQuery(String query, long fromTs,
 			long toTs, Integer limit, Integer offset) throws ServerException {
@@ -125,7 +133,6 @@ public class GraylogConnector {
 		queryParams.put("query", query);
 		queryParams.put("from", dateFormatter.format(new Date(fromTs)));
 		queryParams.put("to", dateFormatter.format(new Date(toTs)));
-		queryParams.put("fields", fieldsToRetrieve);
 		queryParams.put("offset", offset);
 		queryParams.put("limit", limit);
 
@@ -134,7 +141,7 @@ public class GraylogConnector {
 			ResponseEntity<Map> resp = restClient
 					.getForEntity(
 							queryEndpoint
-									+ "?query={query}&from={from}&to={to}&fields={fields}&limit={limit}&offset={offset}",
+									+ "?query={query}&from={from}&to={to}&limit={limit}&offset={offset}",
 							Map.class, queryParams);
 			return (Map<String, Object>) resp.getBody();
 		} catch (RestClientException e) {
@@ -145,7 +152,8 @@ public class GraylogConnector {
 
 	}
 
-	List<LogMsg> convert(List<Map<String, Object>> list) {
+	List<LogMsg> convert(List<Map<String, Object>> list,
+			List<String> customFields) {
 		List<LogMsg> res = new ArrayList<>();
 		if (list != null) {
 			for (Map<String, Object> elem : list) {
@@ -180,6 +188,18 @@ public class GraylogConnector {
 						logger.error(String
 								.format("no type field in message object"));
 					}
+
+					// set customFields
+					Map<String, Object> custom = new HashMap<>();
+					for (String customField : customFields) {
+						Object value = subElem.get(customField);
+						if (value != null) {
+							custom.put(customField
+									.substring(LogMsg.CUSTOM_PREFIX.length()),
+									value);
+						}
+					}
+					msg.setCustomAttributes(custom);
 					res.add(msg);
 				}
 

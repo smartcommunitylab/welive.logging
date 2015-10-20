@@ -102,5 +102,5 @@ public class LogMsg {
 		this.customAttributes = customAttributes;
 	}
 
-	private static final String CUSTOM_PREFIX = "custom_";
+	public static final String CUSTOM_PREFIX = "custom_";
 }
