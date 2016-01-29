@@ -32,7 +32,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +47,6 @@ public class LogManager {
 	@Autowired
 	private GraylogConnector connector;
 
-	private static final String[] validTypes = new String[] { "AppStart",
-			"AppStop", "AppLogin", "AppConsume", "AppProsume", "AppODConsume",
-			"AppCollaborate", "AppDataQueryInitiate", "AppDataQueryComplete",
-			"AppDataQueryError", "AppQuestionnaire" };
-
 	private static final String[] stdFields = new String[] { "appId",
 			"duration", "timestamp", "session", "msg", "type" };
 
@@ -67,7 +61,7 @@ public class LogManager {
 	public void saveLog(LogMsg msg) {
 		// check type
 		if (!isTypeValid(msg)) {
-			msg.setType(DEFAULT_TYPE);
+			throw new IllegalArgumentException("field type is required");
 		}
 		connector.pushLog(msg);
 	}
@@ -88,8 +82,7 @@ public class LogManager {
 	}
 
 	public boolean isTypeValid(LogMsg msg) {
-		return !StringUtils.isBlank(msg.getType())
-				&& ArrayUtils.contains(validTypes, msg.getType());
+		return !StringUtils.isBlank(msg.getType());
 	}
 
 	private Long[] timestampCheck(Long from, Long to) {

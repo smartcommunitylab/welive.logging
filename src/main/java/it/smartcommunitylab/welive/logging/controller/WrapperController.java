@@ -116,4 +116,10 @@ public class WrapperController {
 		resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				"Exception calling graylog server: " + e.getMessage());
 	}
+
+	@ExceptionHandler(value = IllegalArgumentException.class)
+	public void handleIllegalArgumentException(HttpServletResponse resp,
+			Exception e) throws IOException {
+		resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+	}
 }
