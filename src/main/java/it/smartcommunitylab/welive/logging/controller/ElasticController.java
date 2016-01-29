@@ -1,5 +1,11 @@
 package it.smartcommunitylab.welive.logging.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import it.smartcommunitylab.welive.logging.model.AggregationRequest;
+import it.smartcommunitylab.welive.logging.model.AggregationResponse;
+
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -19,26 +25,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
+@Api(value = "/elastic", description = "Log query via Elasticsearch.")
 @RestController
 @RequestMapping("/elastic/")
 public class ElasticController {
 
 	@Autowired
 	private Environment env;
-	
+
+	@ApiOperation(value = "Return one or more elasticsearch aggregation(s). See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html and https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html")
 	@RequestMapping(method = RequestMethod.POST, value = "aggregate")
-	public Map<String, Object> aggregate(HttpServletResponse response, @RequestBody Map<String, Object> body) throws Exception {
+	public AggregationResponse aggregate(HttpServletResponse response, 
+			@ApiParam(value = "Elasticsearch search request composed by 'query' and 'aggregations'", required = true)
+			@RequestBody AggregationRequest request) throws Exception {
 		ObjectMapper mapper = new ObjectMapper();
-		
-		Map<String, Object> request = new TreeMap<String, Object>();
-		if (body.containsKey("aggs")) {
-			request.put("aggs", body.get("aggs"));
+
+		Map<String, Object> req = new TreeMap<String, Object>();
+		if (request.getAggregations() != null) {
+			req.put("aggs", request.getAggregations());
 		}
-		if (body.containsKey("query")) {
-			request.put("query", body.get("query"));
+		if (request.getQuery() != null) {
+			req.put("query", request.getQuery());
 		}		
-		request.put("_source", false);
-		request.put("size", 0);
+		req.put("_source", false);
+		req.put("size", 0);
 		
 		String address = env.getProperty("elastic.url") + "/" + env.getProperty("elastic.index") + "/_search";
 		URL url = new URL(address);
@@ -53,17 +64,17 @@ public class ElasticController {
 		
 		OutputStream out = conn.getOutputStream();
 		Writer writer = new OutputStreamWriter(out, "UTF-8");
-		writer.write(mapper.writeValueAsString(request));
+		writer.write(mapper.writeValueAsString(req));
 		writer.close();
 		out.close();
 		
-		Map result = mapper.readValue(conn.getInputStream(), Map.class);
+		Map res = mapper.readValue(conn.getInputStream(), Map.class);
 		
-		Map filteredResult =  new TreeMap<String, Object>();
-		filteredResult.put("hits", result.get("hits"));
-		filteredResult.put("aggregations", result.get("aggregations"));
+		AggregationResponse result =  new AggregationResponse();
+		result.setHits((Map)res.get("hits"));
+		result.setAggregations((Map)res.get("aggregations"));
 
-		return filteredResult;
+		return result;
 	}	
 
 }

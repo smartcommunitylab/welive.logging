@@ -80,7 +80,24 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>com.mangofactory</groupId>
+			<artifactId>swagger-springmvc</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger-ui</artifactId>
+			<version>2.3.1</version>
+		</dependency>		
+		
+		
 	</dependencies>
 
 	<build>
@@ -115,6 +132,7 @@
 					</includes>
 				</configuration>
 			</plugin>
+
 		</plugins>
 		<finalName>welive.logging</finalName>
 	</build>

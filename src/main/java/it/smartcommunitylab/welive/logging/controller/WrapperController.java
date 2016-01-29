@@ -16,6 +16,9 @@
 
 package it.smartcommunitylab.welive.logging.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.welive.logging.manager.GraylogConnector;
 import it.smartcommunitylab.welive.logging.manager.LogManager;
 import it.smartcommunitylab.welive.logging.model.Counter;
@@ -38,10 +41,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-
 @Api(value = "/", description = "Log operations.")
 @RestController
 public class WrapperController {
@@ -51,11 +50,11 @@ public class WrapperController {
 
 	@Autowired
 	private LogManager logManager;
-
-	@ApiOperation(value = "Post a log entry.")
+	
+	@ApiOperation(value = "Save a log message on the service.")
 	@RequestMapping(method = RequestMethod.POST, value = "/log/{appId}")
-	public void pushLog(@ApiParam(value = "log message", required = true) @RequestBody LogMsg msg, 
-			@PathVariable String appId) {
+	public void pushLog(@ApiParam(value = "Log message", required = true) @RequestBody LogMsg msg, 
+			@ApiParam(value = "Application identifier", required = true) @PathVariable String appId) {
 
 		// appId in path has priority
 		msg.setAppId(appId);
@@ -68,16 +67,17 @@ public class WrapperController {
 		return "Yes I'm up and running!!!";
 	}
 
-	@ApiOperation(value = "Get log entries.")
+	@ApiOperation(value = "Return the paginate list of result matching query criteria.")
 	@RequestMapping(method = RequestMethod.GET, value = "/log/{appId}")
-	public Pagination query(@PathVariable String appId,
-			@RequestParam(required = false) Long from,
-			@RequestParam(required = false) Long to,
-			@RequestParam(required = false) String type,
-			@RequestParam(required = false) String pattern,
-			@RequestParam(required = false) String msgPattern,
-			@RequestParam(required = false) Integer limit,
-			@RequestParam(required = false) Integer offset)
+	public Pagination query(@ApiParam(value = "Application identifier", required = true) @PathVariable String appId,
+			@ApiParam(value = "Timerange start. Express it in millis", required = false) @RequestParam(required = false) Long from,
+			@ApiParam(value = "Timerange end. Express it in millis", required = false) @RequestParam(required = false) Long to,
+			
+			@ApiParam(value = "Log type to search", required = false) @RequestParam(required = false) String type,
+			@ApiParam(value = "Search criteria on custom fields using Lucene syntax. Put in logical AND clause with msgPattern if present.", required = false) @RequestParam(required = false) String pattern,
+			@ApiParam(value = "Search the pattern in log text. Put in logical AND clause with pattern if present.s", required = false) @RequestParam(required = false) String msgPattern,
+			@ApiParam(value = "Maximum number of messages to return. Default value is 150", required = false) @RequestParam(required = false) Integer limit,
+			@ApiParam(value = "Index of first message to return. Default value is 0", required = false) @RequestParam(required = false) Integer offset)
 			throws ServerException {
 		return logManager.query(appId, from, to, type, msgPattern, pattern,
 				limit, offset);
@@ -92,12 +92,15 @@ public class WrapperController {
 
 	@ApiOperation(value = "Count log entries.")
 	@RequestMapping(method = RequestMethod.GET, value = "/log/count/{appId}")
-	public Counter countQuery(@PathVariable String appId,
-			@RequestParam(required = false) Long from,
-			@RequestParam(required = false) Long to,
-			@RequestParam(required = false) String type,
-			@RequestParam(required = false) String pattern,
-			@RequestParam(required = false) String msgPattern)
+	public Counter countQuery(@ApiParam(value = "Application identifier", required = true) @PathVariable String appId,
+			@ApiParam(value = "Timerange start. Express it in millis", required = false) @RequestParam(required = false) Long from,
+			@ApiParam(value = "Timerange end. Express it in millis", required = false) @RequestParam(required = false) Long to,
+			
+			@ApiParam(value = "Log type to search", required = false) @RequestParam(required = false) String type,
+			@ApiParam(value = "Search criteria on custom fields using Lucene syntax. Put in logical AND clause with msgPattern if present.", required = false) @RequestParam(required = false) String pattern,
+			@ApiParam(value = "Search the pattern in log text. Put in logical AND clause with pattern if present.s", required = false) @RequestParam(required = false) String msgPattern,
+			@ApiParam(value = "Maximum number of messages to return. Default value is 150", required = false) @RequestParam(required = false) Integer limit,
+			@ApiParam(value = "Index of first message to return. Default value is 0", required = false) @RequestParam(required = false) Integer offset)
 			throws ServerException {
 
 		return logManager
