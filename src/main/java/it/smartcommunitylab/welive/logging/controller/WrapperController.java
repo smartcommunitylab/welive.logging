@@ -38,6 +38,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+
+@Api(value = "/", description = "Log operations.")
 @RestController
 public class WrapperController {
 
@@ -47,19 +52,23 @@ public class WrapperController {
 	@Autowired
 	private LogManager logManager;
 
+	@ApiOperation(value = "Post a log entry.")
 	@RequestMapping(method = RequestMethod.POST, value = "/log/{appId}")
-	public void pushLog(@RequestBody LogMsg payload, @PathVariable String appId) {
+	public void pushLog(@ApiParam(value = "log message", required = true) @RequestBody LogMsg msg, 
+			@PathVariable String appId) {
 
 		// appId in path has priority
-		payload.setAppId(appId);
-		logManager.saveLog(payload);
+		msg.setAppId(appId);
+		logManager.saveLog(msg);
 	}
 
+	@ApiOperation(value = "Ping.")
 	@RequestMapping(method = RequestMethod.GET, value = "/status")
 	public String echo() {
 		return "Yes I'm up and running!!!";
 	}
 
+	@ApiOperation(value = "Get log entries.")
 	@RequestMapping(method = RequestMethod.GET, value = "/log/{appId}")
 	public Pagination query(@PathVariable String appId,
 			@RequestParam(required = false) Long from,
@@ -81,6 +90,7 @@ public class WrapperController {
 	 * @throws ServerException
 	 */
 
+	@ApiOperation(value = "Count log entries.")
 	@RequestMapping(method = RequestMethod.GET, value = "/log/count/{appId}")
 	public Counter countQuery(@PathVariable String appId,
 			@RequestParam(required = false) Long from,
@@ -115,5 +125,11 @@ public class WrapperController {
 			throws IOException {
 		resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 				"Exception calling graylog server: " + e.getMessage());
+	}
+
+	@ExceptionHandler(value = IllegalArgumentException.class)
+	public void handleIllegalArgumentException(HttpServletResponse resp,
+			Exception e) throws IOException {
+		resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 	}
 }
