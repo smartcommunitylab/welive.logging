@@ -21,18 +21,28 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.welive.logging.manager.GraylogConnector;
 import it.smartcommunitylab.welive.logging.manager.LogManager;
+import it.smartcommunitylab.welive.logging.model.AggregationRequest;
+import it.smartcommunitylab.welive.logging.model.AggregationResponse;
 import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.rmi.ServerException;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,6 +50,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Api(value = "/", description = "Log operations.")
 @RestController
@@ -50,6 +62,9 @@ public class WrapperController {
 
 	@Autowired
 	private LogManager logManager;
+	
+	@Autowired
+	private Environment env;	
 	
 	@ApiOperation(value = "Save a log message on the service.")
 	@RequestMapping(method = RequestMethod.POST, value = "/log/{appId}")
@@ -107,6 +122,57 @@ public class WrapperController {
 				.queryCount(appId, from, to, type, msgPattern, pattern);
 	}
 
+	@ApiOperation(value = "Return one or more elasticsearch aggregation(s). See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html and https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html")
+	@RequestMapping(method = RequestMethod.POST, value = "/log/aggregate")
+	public AggregationResponse aggregate(HttpServletResponse response, 
+			@ApiParam(value = "Elasticsearch search request composed by 'query' and 'aggs'", required = true)
+			@RequestBody AggregationRequest request,
+			@ApiParam(value = "Return documents in hits.", required = false)
+			@RequestParam(required = false) String source) throws Exception {
+		ObjectMapper mapper = new ObjectMapper();
+
+		Map<String, Object> req = new TreeMap<String, Object>();
+		if (request.getAggs() != null) {
+			req.put("aggs", request.getAggs());
+		}
+		if (request.getQuery() != null) {
+			req.put("query", request.getQuery());
+		}		
+		
+		boolean keepSource = false;
+		if (source != null)  {
+			keepSource = Boolean.parseBoolean(source);
+		}
+		
+		req.put("_source", keepSource);
+		
+		String address = env.getProperty("elastic.url") + "/" + env.getProperty("elastic.index") + "/_search";
+		URL url = new URL(address);
+
+		HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+		conn.setRequestMethod("POST");
+		conn.setDoOutput(true);
+		conn.setDoInput(true);
+		
+		conn.setRequestProperty("Accept", "application/json");
+		conn.setRequestProperty("Content-Type", "application/json");	
+		
+		OutputStream out = conn.getOutputStream();
+		Writer writer = new OutputStreamWriter(out, "UTF-8");
+		writer.write(mapper.writeValueAsString(req));
+		writer.close();
+		out.close();
+		
+		Map res = mapper.readValue(conn.getInputStream(), Map.class);
+		
+		AggregationResponse result =  new AggregationResponse();
+		result.setHits((Map)res.get("hits"));
+		result.setAggregations((Map)res.get("aggregations"));
+
+		return result;
+	}		
+	
+	
 	/**
 	 * Facet search
 	 */
