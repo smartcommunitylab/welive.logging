@@ -21,13 +21,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.welive.logging.manager.GraylogConnector;
 import it.smartcommunitylab.welive.logging.manager.LogManager;
-import it.smartcommunitylab.welive.logging.model.AggregationRequest;
-import it.smartcommunitylab.welive.logging.model.AggregationResponse;
 import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -35,8 +35,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.rmi.ServerException;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,8 +48,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Api(value = "/", description = "Log operations.")
 @RestController
@@ -124,27 +120,9 @@ public class WrapperController {
 
 	@ApiOperation(value = "Return one or more elasticsearch aggregation(s). See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html and https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html")
 	@RequestMapping(method = RequestMethod.POST, value = "/log/aggregate")
-	public AggregationResponse aggregate(HttpServletResponse response, 
-			@ApiParam(value = "Elasticsearch search request composed by 'query' and 'aggs'", required = true)
-			@RequestBody AggregationRequest request,
-			@ApiParam(value = "Return documents in hits.", required = false)
-			@RequestParam(required = false) String source) throws Exception {
-		ObjectMapper mapper = new ObjectMapper();
-
-		Map<String, Object> req = new TreeMap<String, Object>();
-		if (request.getAggs() != null) {
-			req.put("aggs", request.getAggs());
-		}
-		if (request.getQuery() != null) {
-			req.put("query", request.getQuery());
-		}		
-		
-		boolean keepSource = false;
-		if (source != null)  {
-			keepSource = Boolean.parseBoolean(source);
-		}
-		
-		req.put("_source", keepSource);
+	public String aggregate(HttpServletResponse response, 
+			@ApiParam(value = "An elasticsearch search query", required = true)
+			@RequestBody String request) throws Exception {
 		
 		String address = env.getProperty("elastic.url") + "/" + env.getProperty("elastic.index") + "/_search";
 		URL url = new URL(address);
@@ -159,17 +137,18 @@ public class WrapperController {
 		
 		OutputStream out = conn.getOutputStream();
 		Writer writer = new OutputStreamWriter(out, "UTF-8");
-		writer.write(mapper.writeValueAsString(req));
+		writer.write(request);
 		writer.close();
 		out.close();
 		
-		Map res = mapper.readValue(conn.getInputStream(), Map.class);
-		
-		AggregationResponse result =  new AggregationResponse();
-		result.setHits((Map)res.get("hits"));
-		result.setAggregations((Map)res.get("aggregations"));
+        BufferedReader sr = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder sb = new StringBuilder();
+        String s;
+        while ((s = sr.readLine()) != null) {
+            sb.append(s);
+        }		
 
-		return result;
+		return sb.toString();
 	}		
 	
 	
