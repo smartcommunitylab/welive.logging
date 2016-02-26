@@ -61,6 +61,12 @@ public class LogManager {
 		if (!isTypeValid(msg)) {
 			throw new IllegalArgumentException("field type is required");
 		}
+		// if log message is blank..put type of log
+		if (StringUtils.isBlank(msg.getMsg())) {
+			msg.setMsg(msg.getType());
+		}
+
+		msg = sanitizeTs(msg);
 		connector.pushLog(msg);
 	}
 
@@ -81,6 +87,18 @@ public class LogManager {
 
 	public boolean isTypeValid(LogMsg msg) {
 		return !StringUtils.isBlank(msg.getType());
+	}
+
+	private LogMsg sanitizeTs(LogMsg msg) {
+		if (msg != null && msg.getTimestamp() > 0) {
+			// timestamp containing more than 10 digit are considered in
+			// millisec
+			if (Long.toString(msg.getTimestamp()).length() > 10) {
+				msg.setTimestamp(msg.getTimestamp() / 1000);
+			}
+		}
+
+		return msg;
 	}
 
 	private Long[] timestampCheck(Long from, Long to) {
