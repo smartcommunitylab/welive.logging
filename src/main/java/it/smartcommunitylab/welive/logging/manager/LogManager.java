@@ -50,8 +50,6 @@ public class LogManager {
 	private static final String[] stdFields = new String[] { "appId",
 			"duration", "timestamp", "session", "msg", "type" };
 
-	private static final String DEFAULT_TYPE = "AppCustom";
-
 	@PostConstruct
 	@SuppressWarnings("unused")
 	private void init() {
