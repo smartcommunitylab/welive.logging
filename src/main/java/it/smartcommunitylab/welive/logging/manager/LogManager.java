@@ -38,7 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LogManager {
+public class LogManager implements it.smartcommunitylab.welive.logging.manager.Logger {
 
 	private static final Logger logger = Logger.getLogger(LogManager.class);
 
@@ -56,6 +56,10 @@ public class LogManager {
 		formatter = new SimpleDateFormat("dd/MM/YYYY HH:mm");
 	}
 
+	/* (non-Javadoc)
+	 * @see it.smartcommunitylab.welive.logging.manager.Logger#saveLog(it.smartcommunitylab.welive.logging.model.LogMsg)
+	 */
+	@Override
 	public void saveLog(LogMsg msg) {
 		// check type
 		if (!isTypeValid(msg)) {
@@ -70,6 +74,10 @@ public class LogManager {
 		connector.pushLog(msg);
 	}
 
+	/* (non-Javadoc)
+	 * @see it.smartcommunitylab.welive.logging.manager.Logger#query(java.lang.String, java.lang.Long, java.lang.Long, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
 	public Pagination query(String appId, Long from, Long to, String type,
 			String msgPattern, String pattern, Integer limit, Integer offset)
 			throws ServerException {
@@ -78,6 +86,10 @@ public class LogManager {
 		return connector.query(q, ts[0], ts[1], limit, offset);
 	}
 
+	/* (non-Javadoc)
+	 * @see it.smartcommunitylab.welive.logging.manager.Logger#queryCount(java.lang.String, java.lang.Long, java.lang.Long, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
 	public Counter queryCount(String appId, Long from, Long to, String type,
 			String msgPattern, String pattern) throws ServerException {
 		Long[] ts = timestampCheck(from, to);
@@ -85,6 +97,10 @@ public class LogManager {
 		return connector.queryCount(q, ts[0], ts[1]);
 	}
 
+	/* (non-Javadoc)
+	 * @see it.smartcommunitylab.welive.logging.manager.Logger#isTypeValid(it.smartcommunitylab.welive.logging.model.LogMsg)
+	 */
+	@Override
 	public boolean isTypeValid(LogMsg msg) {
 		return !StringUtils.isBlank(msg.getType());
 	}

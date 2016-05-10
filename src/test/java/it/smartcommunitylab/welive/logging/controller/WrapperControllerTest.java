@@ -3,7 +3,7 @@ package it.smartcommunitylab.welive.logging.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import it.smartcommunitylab.welive.logging.config.AppConfig;
+import it.smartcommunitylab.welive.logging.TestConfig;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 
 import java.util.GregorianCalendar;
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes = AppConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 public class WrapperControllerTest {
 
 	@Autowired

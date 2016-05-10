@@ -88,7 +88,7 @@ public class LogMsg {
 
 		if (customAttributes != null) {
 			for (Entry<String, Object> entry : customAttributes.entrySet()) {
-				res.put("_" + CUSTOM_PREFIX + entry.getKey(), entry.getValue());
+				res.put("_" + CUSTOM_PREFIX + entry.getKey().toLowerCase(), entry.getValue());
 			}
 		}
 		return res;

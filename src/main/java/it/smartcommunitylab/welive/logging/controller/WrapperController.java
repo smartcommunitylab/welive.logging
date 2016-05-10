@@ -19,8 +19,8 @@ package it.smartcommunitylab.welive.logging.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import it.smartcommunitylab.welive.logging.manager.GraylogConnector;
-import it.smartcommunitylab.welive.logging.manager.LogManager;
+import it.smartcommunitylab.welive.logging.manager.AccessControlManager;
+import it.smartcommunitylab.welive.logging.manager.Logger;
 import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
@@ -38,12 +38,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,11 +53,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WrapperController {
 
-	private static final Logger logger = Logger
-			.getLogger(GraylogConnector.class);
-
 	@Autowired
-	private LogManager logManager;
+	private Logger logManager;
+	
+	@Autowired
+	private AccessControlManager accessControl;
 	
 	@Autowired
 	private Environment env;	
@@ -65,12 +65,15 @@ public class WrapperController {
 	@ApiOperation(value = "Save a log message on the service.")
 	@RequestMapping(method = RequestMethod.POST, value = "/log/{appId}")
 	public void pushLog(@ApiParam(value = "Log message", required = true) @RequestBody LogMsg msg, 
-			@ApiParam(value = "Application identifier", required = true) @PathVariable String appId) {
-
+			@ApiParam(value = "Application identifier", required = true) @PathVariable String appId,
+			@RequestHeader(required=false, name="Authorization") String token) 
+	{
+		accessControl.checkAccess(token, appId, AccessControlManager.WRITE_PATTERN);
 		// appId in path has priority
 		msg.setAppId(appId);
 		logManager.saveLog(msg);
 	}
+
 
 	@ApiOperation(value = "Ping.")
 	@RequestMapping(method = RequestMethod.GET, value = "/status")
@@ -179,5 +182,10 @@ public class WrapperController {
 	public void handleIllegalArgumentException(HttpServletResponse resp,
 			Exception e) throws IOException {
 		resp.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+	}
+	@ExceptionHandler(value = SecurityException.class)
+	public void handleSecurityException(HttpServletResponse resp,
+			Exception e) throws IOException {
+		resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
 	}
 }
