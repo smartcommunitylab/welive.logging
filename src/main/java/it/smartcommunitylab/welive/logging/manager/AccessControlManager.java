@@ -45,12 +45,16 @@ public class AccessControlManager {
 	private static final String SECURED = "true";
 
 	private static Map<String, Set<String>> tokenCache = new HashMap<String, Set<String>>();
+	private static Set<String> protectedApps = null;
 
 	private AACService aac = null;
 
 	@PostConstruct
 	public void init() {
 		aac = new AACService(env.getProperty("aac.url"), null, null);
+		protectedApps = new HashSet<String>();
+		String protectedAppsStr = env.getProperty("logging.protected");
+		protectedApps = org.springframework.util.StringUtils.commaDelimitedListToSet(protectedAppsStr.toLowerCase());
 	}
 	
 	/**
@@ -74,6 +78,11 @@ public class AccessControlManager {
 				}
 			}
 			else if (tokenLC.startsWith("bearer ")) {
+				// bearer token only for 3rd part apps
+				if (protectedApps.contains(appId.toLowerCase())) {
+					throw new SecurityException("Writing to app "+appId +" is not allowed.");
+				}
+				
 				if (!tokenCache.containsKey(tokenLC) || !tokenCache.get(tokenLC).contains(appId)) {
 					try {
 						boolean result = aac.isTokenApplicable(token, getScope(pattern, appId));
