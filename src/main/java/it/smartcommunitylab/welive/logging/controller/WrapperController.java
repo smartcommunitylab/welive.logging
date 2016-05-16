@@ -68,9 +68,9 @@ public class WrapperController {
 			@ApiParam(value = "Application identifier", required = true) @PathVariable String appId,
 			@RequestHeader(required=false, name="Authorization") String token) 
 	{
-		accessControl.checkAccess(token, appId, AccessControlManager.WRITE_PATTERN);
+		accessControl.checkAccess(token, appId.toLowerCase(), AccessControlManager.WRITE_PATTERN);
 		// appId in path has priority
-		msg.setAppId(appId);
+		msg.setAppId(appId.toLowerCase());
 		logManager.saveLog(msg);
 	}
 
