@@ -1,14 +1,9 @@
 package it.smartcommunitylab.welive.logging.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import it.smartcommunitylab.welive.logging.SecureTestConfig;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
-
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;

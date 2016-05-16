@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -62,8 +63,9 @@ public class AccessControlManager {
 	public void checkAccess(String token, String appId, String pattern) throws SecurityException {
 		String secured = env.getProperty("logging.secured");
 		if (SECURED.equals(secured)) {
-			if (token == null) {
-				throw new SecurityException("Invalid token");
+			if (StringUtils.isEmpty(token)) {
+//				throw new SecurityException("Invalid token");
+				return;
 			}
 			String tokenLC = token.toLowerCase();
 			if (tokenLC.startsWith("basic ")) {
