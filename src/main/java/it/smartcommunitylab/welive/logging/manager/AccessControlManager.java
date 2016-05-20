@@ -38,6 +38,8 @@ import eu.trentorise.smartcampus.aac.AACService;
 public class AccessControlManager {
 
 	public static final String WRITE_PATTERN = "welive.logging.{app}.write";
+	public static final String READ_PATTERN = "welive.logging.{app}.read";
+
 	
 	@Autowired
 	private Environment env;	
@@ -56,6 +58,15 @@ public class AccessControlManager {
 		String protectedAppsStr = env.getProperty("logging.protected");
 		protectedApps = org.springframework.util.StringUtils.commaDelimitedListToSet(protectedAppsStr.toLowerCase());
 	}
+	
+	/**
+	 * Check that the specified BasicAuth token is valid.
+	 * @param token
+	 */
+	public void checkAccess(String token)  throws SecurityException{
+		checkAccess(token, null, null);
+	}
+
 	
 	/**
 	 * Check that the specified token is enabled for logging operation defined by the scope pattern and the app.
@@ -77,7 +88,7 @@ public class AccessControlManager {
 					throw new SecurityException("Invalid credentials");
 				}
 			}
-			else if (tokenLC.startsWith("bearer ")) {
+			else if (tokenLC.startsWith("bearer ") && appId != null) {
 				// bearer token only for 3rd part apps
 				if (protectedApps.contains(appId.toLowerCase())) {
 					throw new SecurityException("Writing to app "+appId +" is not allowed.");
@@ -115,4 +126,5 @@ public class AccessControlManager {
 	private String getScope(String pattern, String appId) {
 		return pattern.replace("{app}", appId);
 	}
+
 }

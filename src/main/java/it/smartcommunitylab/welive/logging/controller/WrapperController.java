@@ -91,8 +91,12 @@ public class WrapperController {
 			@ApiParam(value = "Search criteria on custom fields using Lucene syntax. Put in logical AND clause with msgPattern if present.", required = false) @RequestParam(required = false) String pattern,
 			@ApiParam(value = "Search the pattern in log text. Put in logical AND clause with pattern if present.s", required = false) @RequestParam(required = false) String msgPattern,
 			@ApiParam(value = "Maximum number of messages to return. Default value is 150", required = false) @RequestParam(required = false) Integer limit,
-			@ApiParam(value = "Index of first message to return. Default value is 0", required = false) @RequestParam(required = false) Integer offset)
+			@ApiParam(value = "Index of first message to return. Default value is 0", required = false) @RequestParam(required = false) Integer offset,
+			@RequestHeader(required=false, name="Authorization") String token)
 			throws ServerException {
+
+		accessControl.checkAccess(token, appId.toLowerCase(), AccessControlManager.READ_PATTERN);
+		
 		return logManager.query(appId, from, to, type, msgPattern, pattern,
 				limit, offset);
 	}
@@ -114,8 +118,11 @@ public class WrapperController {
 			@ApiParam(value = "Search criteria on custom fields using Lucene syntax. Put in logical AND clause with msgPattern if present.", required = false) @RequestParam(required = false) String pattern,
 			@ApiParam(value = "Search the pattern in log text. Put in logical AND clause with pattern if present.s", required = false) @RequestParam(required = false) String msgPattern,
 			@ApiParam(value = "Maximum number of messages to return. Default value is 150", required = false) @RequestParam(required = false) Integer limit,
-			@ApiParam(value = "Index of first message to return. Default value is 0", required = false) @RequestParam(required = false) Integer offset)
+			@ApiParam(value = "Index of first message to return. Default value is 0", required = false) @RequestParam(required = false) Integer offset,
+			@RequestHeader(required=false, name="Authorization") String token)
 			throws ServerException {
+
+		accessControl.checkAccess(token, appId.toLowerCase(), AccessControlManager.READ_PATTERN);
 
 		return logManager
 				.queryCount(appId, from, to, type, msgPattern, pattern);
@@ -125,8 +132,11 @@ public class WrapperController {
 	@RequestMapping(method = RequestMethod.POST, value = "/log/aggregate")
 	public String aggregate(HttpServletResponse response, 
 			@ApiParam(value = "An elasticsearch search query", required = true)
-			@RequestBody String request) throws Exception {
+			@RequestBody String request,
+			@RequestHeader(required=false, name="Authorization") String token) throws Exception {
 		
+		accessControl.checkAccess(token);
+
 		String address = env.getProperty("elastic.url") + "/" + env.getProperty("elastic.index") + "/_search";
 		URL url = new URL(address);
 
