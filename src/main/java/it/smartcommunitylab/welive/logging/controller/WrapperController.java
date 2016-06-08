@@ -97,7 +97,7 @@ public class WrapperController {
 
 		accessControl.checkAccess(token, appId.toLowerCase(), AccessControlManager.READ_PATTERN);
 		
-		return logManager.query(appId, from, to, type, msgPattern, pattern,
+		return logManager.query(appId.toLowerCase(), from, to, type, msgPattern, pattern,
 				limit, offset);
 	}
 
@@ -125,7 +125,7 @@ public class WrapperController {
 		accessControl.checkAccess(token, appId.toLowerCase(), AccessControlManager.READ_PATTERN);
 
 		return logManager
-				.queryCount(appId, from, to, type, msgPattern, pattern);
+				.queryCount(appId.toLowerCase(), from, to, type, msgPattern, pattern);
 	}
 
 	@ApiOperation(value = "Return one or more elasticsearch aggregation(s). See https://www.elastic.co/guide/en/elasticsearch/reference/current/search-search.html and https://www.elastic.co/guide/en/elasticsearch/reference/current/search-aggregations.html")
