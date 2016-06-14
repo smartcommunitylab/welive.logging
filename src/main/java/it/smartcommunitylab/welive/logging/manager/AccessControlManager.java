@@ -84,7 +84,7 @@ public class AccessControlManager {
 			}
 			String tokenLC = token.toLowerCase();
 			if (tokenLC.startsWith("basic ")) {
-				if (!token.equals("Basic "+env.getProperty("logging.basic.token"))) {
+				if (!token.substring(6).equals(env.getProperty("logging.basic.token"))) {
 					throw new SecurityException("Invalid credentials");
 				}
 			}
