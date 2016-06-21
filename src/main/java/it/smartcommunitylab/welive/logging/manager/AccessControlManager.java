@@ -79,13 +79,12 @@ public class AccessControlManager {
 		String secured = env.getProperty("logging.secured");
 		if (SECURED.equals(secured)) {
 			if (StringUtils.isEmpty(token)) {
-//				throw new SecurityException("Invalid token");
-				return;
+				throw new SecurityException("Invalid token: '"+token+"' for app "+appId);
 			}
 			String tokenLC = token.toLowerCase();
 			if (tokenLC.startsWith("basic ")) {
 				if (!token.substring(6).equals(env.getProperty("logging.basic.token"))) {
-					throw new SecurityException("Invalid credentials");
+					throw new SecurityException("Invalid credentials: '"+token+"' for app "+appId);
 				}
 			}
 			else if (tokenLC.startsWith("bearer ") && appId != null) {
@@ -112,8 +111,7 @@ public class AccessControlManager {
 					}
 				}
 			} else {
-				throw new SecurityException("Invalid credentials");
-
+				throw new SecurityException("Invalid credentials: '"+token+"' for app "+appId);
 			}
 		}
 	}

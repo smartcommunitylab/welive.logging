@@ -38,6 +38,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -53,6 +54,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class WrapperController {
 
+	private static org.slf4j.Logger logger = LoggerFactory.getLogger(WrapperController.class);
+	
 	@Autowired
 	private Logger logManager;
 	
@@ -196,6 +199,8 @@ public class WrapperController {
 	@ExceptionHandler(value = SecurityException.class)
 	public void handleSecurityException(HttpServletResponse resp,
 			Exception e) throws IOException {
+
+		logger.error(e.getMessage());
 		resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
 	}
 }
