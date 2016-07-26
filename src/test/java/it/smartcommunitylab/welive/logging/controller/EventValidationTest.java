@@ -184,6 +184,19 @@ public class EventValidationTest {
 		mockMvc.perform(post("/log/{appId}", appId).contentType("application/json")
 				.header("Authorization", "Basic " + env.getProperty("logging.basic.token"))
 				.content(toJson(testSchema))).andExpect(status().isOk());
+		
+		// editing schema.
+		jsonSchema = jsonSchema.replace("componentname", "cName");
+		
+		// update schema.
+		mockMvc.perform(post("/update/schema/{appId}/{type}", appId, type).contentType("application/json")
+				.header("Authorization", "Basic " + env.getProperty("logging.basic.token")).content(toJson(jsonSchema)))
+				.andExpect(status().isOk());
+		
+		mockMvc.perform(post("/log/{appId}", appId).contentType("application/json")
+				.header("Authorization", "Basic " + env.getProperty("logging.basic.token"))
+				.content(toJson(testSchema))).andExpect(status().isPreconditionFailed());
+		
 
 	}
 
