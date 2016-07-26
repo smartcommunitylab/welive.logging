@@ -18,6 +18,7 @@ package it.smartcommunitylab.welive.logging.manager;
 import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
+import it.smartcommunitylab.welive.logging.model.ValidationErrorLogMsg;
 
 import java.rmi.ServerException;
 
@@ -62,6 +63,16 @@ public class MockLogger implements Logger {
 	@Override
 	public boolean isTypeValid(LogMsg msg) {
 		return true;
+	}
+
+	@Override
+	public void saveLog(ValidationErrorLogMsg msg) {
+		try {
+			System.err.println("Saving "+new ObjectMapper().writeValueAsString(msg));
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

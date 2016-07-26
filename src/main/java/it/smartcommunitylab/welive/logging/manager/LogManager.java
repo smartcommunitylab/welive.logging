@@ -16,10 +16,6 @@
 
 package it.smartcommunitylab.welive.logging.manager;
 
-import it.smartcommunitylab.welive.logging.model.Counter;
-import it.smartcommunitylab.welive.logging.model.LogMsg;
-import it.smartcommunitylab.welive.logging.model.Pagination;
-
 import java.rmi.ServerException;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -37,6 +33,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import it.smartcommunitylab.welive.logging.model.Counter;
+import it.smartcommunitylab.welive.logging.model.LogMsg;
+import it.smartcommunitylab.welive.logging.model.Pagination;
+import it.smartcommunitylab.welive.logging.model.ValidationErrorLogMsg;
+
 @Service
 public class LogManager implements it.smartcommunitylab.welive.logging.manager.Logger {
 
@@ -47,8 +48,8 @@ public class LogManager implements it.smartcommunitylab.welive.logging.manager.L
 	@Autowired
 	private GraylogConnector connector;
 
-	private static final String[] stdFields = new String[] { "appId",
-			"duration", "timestamp", "session", "msg", "type" };
+	private static final String[] stdFields = new String[] { "appId", "duration", "timestamp", "session", "msg",
+			"type" };
 
 	@PostConstruct
 	@SuppressWarnings("unused")
@@ -56,8 +57,11 @@ public class LogManager implements it.smartcommunitylab.welive.logging.manager.L
 		formatter = new SimpleDateFormat("dd/MM/YYYY HH:mm");
 	}
 
-	/* (non-Javadoc)
-	 * @see it.smartcommunitylab.welive.logging.manager.Logger#saveLog(it.smartcommunitylab.welive.logging.model.LogMsg)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.smartcommunitylab.welive.logging.manager.Logger#saveLog(it.
+	 * smartcommunitylab.welive.logging.model.LogMsg)
 	 */
 	@Override
 	public void saveLog(LogMsg msg) {
@@ -74,31 +78,60 @@ public class LogManager implements it.smartcommunitylab.welive.logging.manager.L
 		connector.pushLog(msg);
 	}
 
-	/* (non-Javadoc)
-	 * @see it.smartcommunitylab.welive.logging.manager.Logger#query(java.lang.String, java.lang.Long, java.lang.Long, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer)
+	@Override
+	public void saveLog(ValidationErrorLogMsg msg) {
+		msg = sanitizeTs(msg);
+		connector.pushLog(msg);
+	}
+
+	private ValidationErrorLogMsg sanitizeTs(ValidationErrorLogMsg msg) {
+		if (msg != null && msg.getTimestamp() > 0) {
+			// timestamp containing more than 10 digit are considered in
+			// millisec
+			if (Long.toString(msg.getTimestamp()).length() > 10) {
+				msg.setTimestamp(msg.getTimestamp() / 1000);
+			}
+		}
+
+		return msg;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.smartcommunitylab.welive.logging.manager.Logger#query(java.lang.
+	 * String, java.lang.Long, java.lang.Long, java.lang.String,
+	 * java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer)
 	 */
 	@Override
-	public Pagination query(String appId, Long from, Long to, String type,
-			String msgPattern, String pattern, Integer limit, Integer offset)
-			throws ServerException {
+	public Pagination query(String appId, Long from, Long to, String type, String msgPattern, String pattern,
+			Integer limit, Integer offset) throws ServerException {
 		Long[] ts = timestampCheck(from, to);
 		String q = patternConstructor(appId, msgPattern, type, pattern);
 		return connector.query(q, ts[0], ts[1], limit, offset);
 	}
 
-	/* (non-Javadoc)
-	 * @see it.smartcommunitylab.welive.logging.manager.Logger#queryCount(java.lang.String, java.lang.Long, java.lang.Long, java.lang.String, java.lang.String, java.lang.String)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * it.smartcommunitylab.welive.logging.manager.Logger#queryCount(java.lang.
+	 * String, java.lang.Long, java.lang.Long, java.lang.String,
+	 * java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Counter queryCount(String appId, Long from, Long to, String type,
-			String msgPattern, String pattern) throws ServerException {
+	public Counter queryCount(String appId, Long from, Long to, String type, String msgPattern, String pattern)
+			throws ServerException {
 		Long[] ts = timestampCheck(from, to);
 		String q = patternConstructor(appId, msgPattern, type, pattern);
 		return connector.queryCount(q, ts[0], ts[1]);
 	}
 
-	/* (non-Javadoc)
-	 * @see it.smartcommunitylab.welive.logging.manager.Logger#isTypeValid(it.smartcommunitylab.welive.logging.model.LogMsg)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see it.smartcommunitylab.welive.logging.manager.Logger#isTypeValid(it.
+	 * smartcommunitylab.welive.logging.model.LogMsg)
 	 */
 	@Override
 	public boolean isTypeValid(LogMsg msg) {
@@ -118,8 +151,7 @@ public class LogManager implements it.smartcommunitylab.welive.logging.manager.L
 	}
 
 	private Long[] timestampCheck(Long from, Long to) {
-		boolean setDefault = (from == null || from <= 0)
-				&& (to == null || to <= 0);
+		boolean setDefault = (from == null || from <= 0) && (to == null || to <= 0);
 		boolean setFrom = !setDefault && from == null;
 		boolean setTo = !setDefault && to == null;
 		Calendar cal = new GregorianCalendar();
@@ -128,32 +160,27 @@ public class LogManager implements it.smartcommunitylab.welive.logging.manager.L
 			cal.setTimeInMillis(to);
 			cal.add(Calendar.DAY_OF_WEEK, -7);
 			from = cal.getTimeInMillis();
-			logger.debug(String.format("set default from and to: %s / %s",
-					formatter.format(new Date(from)),
+			logger.debug(String.format("set default from and to: %s / %s", formatter.format(new Date(from)),
 					formatter.format(new Date(to))));
 		} else if (setFrom) {
 			cal.setTimeInMillis(to);
 			cal.add(Calendar.DAY_OF_WEEK, -7);
 			from = cal.getTimeInMillis();
-			logger.debug(String.format("set from: %s",
-					formatter.format(new Date(from))));
+			logger.debug(String.format("set from: %s", formatter.format(new Date(from))));
 		} else if (setTo) {
 			cal.setTimeInMillis(from);
 			cal.add(Calendar.DAY_OF_WEEK, 7);
 			to = cal.getTimeInMillis();
-			logger.debug(String.format("set to: %s",
-					formatter.format(new Date(to))));
+			logger.debug(String.format("set to: %s", formatter.format(new Date(to))));
 		} else {
-			logger.debug(String.format("set and from already setted: %s / %s",
-					formatter.format(new Date(from)),
+			logger.debug(String.format("set and from already setted: %s / %s", formatter.format(new Date(from)),
 					formatter.format(new Date(to))));
 		}
 
 		return new Long[] { from, to };
 	}
 
-	private String patternConstructor(String appId, String msgPattern,
-			String type, String pattern) {
+	private String patternConstructor(String appId, String msgPattern, String type, String pattern) {
 		StringBuffer buf = new StringBuffer();
 		if (!StringUtils.isBlank(appId)) {
 			buf.append("appId:").append(appId);
@@ -193,14 +220,13 @@ public class LogManager implements it.smartcommunitylab.welive.logging.manager.L
 			Matcher m = p.matcher(pattern);
 			while (m.find()) {
 				if (Arrays.binarySearch(stdFields, m.group()) < 0) {
-					logger.debug("hit custom field "
-							+ m.group().substring(0, m.group().length() - 1));
-					pattern = pattern.replace(m.group(), LogMsg.CUSTOM_PREFIX
-							+ m.group());
+					logger.debug("hit custom field " + m.group().substring(0, m.group().length() - 1));
+					pattern = pattern.replace(m.group(), LogMsg.CUSTOM_PREFIX + m.group());
 				}
 			}
 		}
 
 		return pattern;
 	}
+
 }

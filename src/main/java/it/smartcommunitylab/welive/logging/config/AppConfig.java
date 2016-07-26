@@ -16,11 +16,20 @@
 
 package it.smartcommunitylab.welive.logging.config;
 
+import java.net.UnknownHostException;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -35,6 +44,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @ComponentScan(basePackages = { "it.smartcommunitylab.welive.logging" })
 @PropertySource("classpath:/application.properties")
 public class AppConfig {
+	
+	@Autowired
+	private Environment env;	
 
 	@Bean
     public Docket api(){
@@ -50,5 +62,17 @@ public class AppConfig {
         ApiInfo apiInfo = new ApiInfo(null, null, null, null, null, null, null);
         return apiInfo;
     }
-	
+    
+	@Bean
+	public MongoTemplate getMongo() throws UnknownHostException, MongoException {
+
+		MongoTemplate template = new MongoTemplate(new MongoClient(), "logging");
+
+		if (!template.collectionExists("schema")) {
+			template.createCollection("schema");
+		}
+
+		return template;
+	}
+  
 }

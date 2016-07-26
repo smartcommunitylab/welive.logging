@@ -1,0 +1,14 @@
+{
+"ComponentSelected":{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "componentname": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "componentname"
+  ]
+}
+}

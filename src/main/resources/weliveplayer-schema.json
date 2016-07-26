@@ -1,0 +1,142 @@
+{
+  "PlayerAccess": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "userid"
+    ]
+  },
+  "PlayerAppsAccess": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "userid": {
+        "type": "string"
+      },
+      "pilotid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "userid",
+      "pilotid"
+    ]
+  },
+  "AppInfoAccess": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "pilot": {
+        "type": "string"
+      },
+      "appname": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      },
+      "appid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "pilot",
+      "appname",
+      "userid",
+      "appid"
+    ]
+  },
+  "AppOpen": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "pilot": {
+        "type": "string"
+      },
+      "appname": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      },
+      "appid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "pilot",
+      "appname",
+      "userid",
+      "appid"
+    ]
+  },
+  "AppDownload": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "pilot": {
+        "type": "string"
+      },
+      "appname": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      },
+      "appid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "pilot",
+      "appname",
+      "userid",
+      "appid"
+    ]
+  },
+  "PlayerAppSearch": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "pilot": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "pilot",
+      "userid"
+    ]
+  },
+  "PlayerAppRecommendation": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "pilot": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      },
+      "appid": {
+        "type": "string"
+      },
+      "appname": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "pilot",
+      "userid",
+      "appid",
+      "appname"
+    ]
+  }
+}

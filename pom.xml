@@ -8,6 +8,7 @@
 
 	<properties>
 		<spring.version>4.2.1.RELEASE</spring.version>
+		<spring-data-mongodb.version>1.6.2.RELEASE</spring-data-mongodb.version>
 	</properties>
 	<dependencies>
 
@@ -95,15 +96,27 @@
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.3.1</version>
-		</dependency>		
-		
+		</dependency>
+
 		<dependency>
-            <groupId>eu.trentorise.smartcampus</groupId>
-            <artifactId>aac.client</artifactId>
-            <version>1.2</version>
-        </dependency>
+			<groupId>eu.trentorise.smartcampus</groupId>
+			<artifactId>aac.client</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.fge</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>2.0.1</version>
+		</dependency>
 		
-		
+		<!--Spring Mongo -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-mongodb</artifactId>
+			<version>${spring-data-mongodb.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -142,21 +155,21 @@
 		</plugins>
 		<finalName>welive.logging</finalName>
 	</build>
-	
-	   <repositories>
-        <repository>
-            <id>SmartCommunity</id>
-            <url>http://repository.smartcommunitylab.it/content/groups/public</url>
-        </repository>
-        <repository>
-            <id>spring-milestone</id>
-            <name>Spring Maven MILESTONE Repository</name>
-            <url>http://maven.springframework.org/milestone</url>
-        </repository>
-        <repository>
-            <id>spring-snnapshot</id>
-            <name>Spring Maven SNAPSHOT Repository</name>
-            <url>http://maven.springframework.org/snapshot</url>
-        </repository>
-    </repositories>
+
+	<repositories>
+		<repository>
+			<id>SmartCommunity</id>
+			<url>http://repository.smartcommunitylab.it/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>spring-milestone</id>
+			<name>Spring Maven MILESTONE Repository</name>
+			<url>http://maven.springframework.org/milestone</url>
+		</repository>
+		<repository>
+			<id>spring-snnapshot</id>
+			<name>Spring Maven SNAPSHOT Repository</name>
+			<url>http://maven.springframework.org/snapshot</url>
+		</repository>
+	</repositories>
 </project>

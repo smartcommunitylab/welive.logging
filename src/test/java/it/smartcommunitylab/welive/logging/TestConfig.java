@@ -16,14 +16,22 @@
 package it.smartcommunitylab.welive.logging;
 
 import it.smartcommunitylab.welive.logging.manager.AccessControlManager;
+import it.smartcommunitylab.welive.logging.manager.JsonSchemaValidator;
 import it.smartcommunitylab.welive.logging.manager.Logger;
 import it.smartcommunitylab.welive.logging.manager.MockLogger;
+
+import java.net.UnknownHostException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 
 /**
  * @author raman
@@ -42,5 +50,21 @@ public class TestConfig {
 	@Bean
 	public AccessControlManager accessControlManager() {
 		return new AccessControlManager();
+	}
+	@Bean
+	public JsonSchemaValidator jsonSchemaValidator() {
+		return new JsonSchemaValidator();
+	}
+	
+	@Bean
+	public MongoTemplate getMongo() throws UnknownHostException, MongoException {
+
+		MongoTemplate template = new MongoTemplate(new MongoClient(), "logging");
+
+		if (!template.collectionExists("schema")) {
+			template.createCollection("schema");
+		}
+
+		return template;
 	}
 }

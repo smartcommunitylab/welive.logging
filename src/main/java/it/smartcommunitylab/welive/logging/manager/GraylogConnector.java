@@ -19,6 +19,7 @@ package it.smartcommunitylab.welive.logging.manager;
 import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
+import it.smartcommunitylab.welive.logging.model.ValidationErrorLogMsg;
 
 import java.io.IOException;
 import java.rmi.ServerException;
@@ -87,6 +88,11 @@ public class GraylogConnector {
 	}
 
 	public void pushLog(LogMsg msg) {
+		restClient.postForObject(graylogEndpoint, msg.toGraylogFormat(),
+				Map.class);
+	}
+	
+	public void pushLog(ValidationErrorLogMsg msg) {
 		restClient.postForObject(graylogEndpoint, msg.toGraylogFormat(),
 				Map.class);
 	}

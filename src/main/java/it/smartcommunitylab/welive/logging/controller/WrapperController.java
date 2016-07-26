@@ -16,15 +16,6 @@
 
 package it.smartcommunitylab.welive.logging.controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import it.smartcommunitylab.welive.logging.manager.AccessControlManager;
-import it.smartcommunitylab.welive.logging.manager.Logger;
-import it.smartcommunitylab.welive.logging.model.Counter;
-import it.smartcommunitylab.welive.logging.model.LogMsg;
-import it.smartcommunitylab.welive.logging.model.Pagination;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,9 +29,12 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,7 +42,20 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import it.smartcommunitylab.welive.exception.WeLiveLoggerException;
+import it.smartcommunitylab.welive.logging.manager.AccessControlManager;
+import it.smartcommunitylab.welive.logging.manager.JsonSchemaValidator;
+import it.smartcommunitylab.welive.logging.manager.Logger;
+import it.smartcommunitylab.welive.logging.model.Counter;
+import it.smartcommunitylab.welive.logging.model.LogMsg;
+import it.smartcommunitylab.welive.logging.model.Pagination;
+import it.smartcommunitylab.welive.logging.model.Response;
 
 @Api(value = "/", description = "Log operations.")
 @RestController
@@ -63,18 +70,38 @@ public class WrapperController {
 	private AccessControlManager accessControl;
 	
 	@Autowired
+	private JsonSchemaValidator JsonSchemaValidator;
+	
+	@Autowired
 	private Environment env;	
 	
 	@ApiOperation(value = "Save a log message on the service.")
 	@RequestMapping(method = RequestMethod.POST, value = "/log/{appId}")
 	public void pushLog(@ApiParam(value = "Log message", required = true) @RequestBody LogMsg msg, 
 			@ApiParam(value = "Application identifier", required = true) @PathVariable String appId,
-			@RequestHeader(required=false, name="Authorization") String token) 
+			@RequestHeader(required=false, name="Authorization") String token) throws WeLiveLoggerException 
 	{
 		accessControl.checkAccess(token, appId.toLowerCase(), AccessControlManager.WRITE_PATTERN);
+		
+		JsonSchemaValidator.validate(appId, msg);
+		
 		// appId in path has priority
 		msg.setAppId(appId.toLowerCase());
 		logManager.saveLog(msg);
+	}
+	
+	@ApiOperation(value = "Update log schema in service.")
+	@RequestMapping(method = RequestMethod.POST, value = "/update/schema/{appId}/{type}")
+	public void updateSchema(@ApiParam(value = "Schema of log msg", required = true) @RequestBody String schema,
+			@ApiParam(value = "Application identifier", required = true) @PathVariable String appId,
+			@ApiParam(value = "Type of log msg", required = true) @PathVariable String type,
+			@RequestHeader(required = false, name = "Authorization") String token) throws WeLiveLoggerException {
+		try {
+			accessControl.checkAccess(token, appId.toLowerCase(), AccessControlManager.WRITE_PATTERN);
+			JsonSchemaValidator.updateCache(appId, type, schema);
+		} catch (WeLiveLoggerException wle) {
+			throw new WeLiveLoggerException(HttpStatus.INTERNAL_SERVER_ERROR.value(), wle.getMessage());
+		}
 	}
 
 
@@ -203,4 +230,12 @@ public class WrapperController {
 		logger.error(e.getMessage());
 		resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
 	}
+	@ExceptionHandler(value = WeLiveLoggerException.class)
+	public @ResponseBody Response<Void> handleExceptions(HttpServletResponse response, Exception exception) {
+		Response<Void> res = exception instanceof WeLiveLoggerException ? ((WeLiveLoggerException) exception).getBody()
+				: new Response<Void>(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, exception.getMessage());
+		response.setStatus(res.getErrorCode());
+		return res;
+	}
+	
 }

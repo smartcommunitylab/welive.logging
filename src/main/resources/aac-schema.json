@@ -1,0 +1,126 @@
+{
+  "UserCreated": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "authority": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "authority",
+      "userid"
+    ]
+  },
+  "UserUpdated": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "authority": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "authority",
+      "userid"
+    ]
+  },
+  "UserExtraInfo": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "pilot": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "pilot",
+      "userid"
+    ]
+  },
+  "UserAppAuthorization": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "clientapp": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "clientapp",
+      "userid"
+    ]
+  },
+  "DeveloperAccess": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "userid"
+    ]
+  },
+  "ClientAppCreated": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "clientapp": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "clientapp",
+      "userid"
+    ]
+  },
+  "ClientAppUpdated": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "clientapp": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "clientapp",
+      "userid"
+    ]
+  },
+  "ClientAppDeleted": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "clientapp": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "clientapp",
+      "userid"
+    ]
+  }
+}

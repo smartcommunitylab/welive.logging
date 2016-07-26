@@ -18,6 +18,7 @@ package it.smartcommunitylab.welive.logging.manager;
 import it.smartcommunitylab.welive.logging.model.Counter;
 import it.smartcommunitylab.welive.logging.model.LogMsg;
 import it.smartcommunitylab.welive.logging.model.Pagination;
+import it.smartcommunitylab.welive.logging.model.ValidationErrorLogMsg;
 
 import java.rmi.ServerException;
 
@@ -37,5 +38,7 @@ public interface Logger {
 			String msgPattern, String pattern) throws ServerException;
 
 	public boolean isTypeValid(LogMsg msg);
+
+	public void saveLog(ValidationErrorLogMsg msg);
 
 }
