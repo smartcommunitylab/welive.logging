@@ -171,7 +171,7 @@ public class EventValidationTest {
 		String jsonSchema = readFile("test-schema.json");
 		String type = "testSchema"; 
 
-		mockMvc.perform(post("/update/schema/{appId}/{type}", appId, type).contentType("application/json")
+		mockMvc.perform(post("/log/update/schema/{appId}/{type}", appId, type).contentType("application/json")
 				.header("Authorization", "Basic " + env.getProperty("logging.basic.token")).content(toJson(jsonSchema)))
 				.andExpect(status().isOk());
 		
@@ -189,7 +189,7 @@ public class EventValidationTest {
 		jsonSchema = jsonSchema.replace("componentname", "cName");
 		
 		// update schema.
-		mockMvc.perform(post("/update/schema/{appId}/{type}", appId, type).contentType("application/json")
+		mockMvc.perform(post("/log/update/schema/{appId}/{type}", appId, type).contentType("application/json")
 				.header("Authorization", "Basic " + env.getProperty("logging.basic.token")).content(toJson(jsonSchema)))
 				.andExpect(status().isOk());
 		

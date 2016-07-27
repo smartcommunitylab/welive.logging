@@ -91,7 +91,7 @@ public class WrapperController {
 	}
 	
 	@ApiOperation(value = "Update log schema in service.")
-	@RequestMapping(method = RequestMethod.POST, value = "/update/schema/{appId}/{type}")
+	@RequestMapping(method = RequestMethod.POST, value = "/log/update/schema/{appId}/{type}")
 	public void updateSchema(@ApiParam(value = "Schema of log msg", required = true) @RequestBody String schema,
 			@ApiParam(value = "Application identifier", required = true) @PathVariable String appId,
 			@ApiParam(value = "Type of log msg", required = true) @PathVariable String type,
