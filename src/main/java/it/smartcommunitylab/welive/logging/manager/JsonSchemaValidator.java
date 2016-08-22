@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -299,7 +300,7 @@ public class JsonSchemaValidator {
 		// player app access.
 		LogMsg playerAppAccessLogEvent = new LogMsg();
 		Map<String, Object> attr2 = new HashMap<String, Object>();
-		attr2.put("userid", "3");
+		attr2.put("userid", new ArrayList<String>());
 		attr2.put("pilotid", "weliveplayer");
 		playerAppAccessLogEvent.setType("PlayerAppsAccess");
 		playerAppAccessLogEvent.setCustomAttributes(attr2);
