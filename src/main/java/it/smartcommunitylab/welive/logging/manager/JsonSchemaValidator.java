@@ -1,5 +1,9 @@
 package it.smartcommunitylab.welive.logging.manager;
 
+import it.smartcommunitylab.welive.exception.WeLiveLoggerException;
+import it.smartcommunitylab.welive.logging.model.LogMsg;
+import it.smartcommunitylab.welive.logging.model.ValidationErrorLogMsg;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,10 +37,6 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
-
-import it.smartcommunitylab.welive.exception.WeLiveLoggerException;
-import it.smartcommunitylab.welive.logging.model.LogMsg;
-import it.smartcommunitylab.welive.logging.model.ValidationErrorLogMsg;
 
 @Component
 public class JsonSchemaValidator {
@@ -137,7 +137,13 @@ public class JsonSchemaValidator {
 
 		ProcessingReport report = null;
 		boolean result = false;
-		Map<String, Object> customAttributes = logMsg.getCustomAttributes();
+		Map<String, Object> customAttributes = new HashMap<String, Object>();
+		
+		if (logMsg.getCustomAttributes() != null) {
+			for (String a : logMsg.getCustomAttributes().keySet()) {
+				customAttributes.put(a.toLowerCase(), logMsg.getCustomAttributes().get(a));
+			}
+		}
 		String eventType = logMsg.getType();
 
 		// validate only those components that have schema in cache.
