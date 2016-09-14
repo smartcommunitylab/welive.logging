@@ -18,13 +18,13 @@
       "userid": {
         "type": "string"
       },
-      "pilotid": {
+      "pilot": {
         "type": "string"
       }
     },
     "required": [
       "userid",
-      "pilotid"
+      "pilot"
     ]
   },
   "AppInfoAccess": {

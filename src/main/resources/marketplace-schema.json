@@ -1,147 +1,126 @@
 {
-  "ArtefactPublished": {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "type": "object",
-    "properties": {
-      "providername": {
-        "type": "string"
-      },
-      "pilot": {
-        "type": "string"
-      },
-      "companies": {
-        "type": "string"
-      },
-      "license": {
-        "type": "string"
-      },
-      "ownerid": {
-        "type": "integer"
-      },
-      "artefacttype": {
-        "type": "string"
-      },
-      "usedartefacts": {
-        "type": "string"
-      },
-      "artefactid": {
-        "type": "integer"
-      },
-      "artefactname": {
-        "type": "string"
-      }
-    },
-    "required": [
-      "providername",
-      "pilot",
-      "companies",
-      "license",
-      "ownerid",
-      "artefacttype",
-      "artefactid",
-      "artefactname"
-    ]
-  },
-  "ArtefactRemoved": {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "type": "object",
-    "properties": {
-      "pilot": {
-        "type": "string"
-      },
-      "license": {
-        "type": "string"
-      },
-      "ownerid": {
-        "type": "integer"
-      },
-      "artefacttype": {
-        "type": "string"
-      },
-      "artefactid": {
-        "type": "integer"
-      }
-    },
-    "required": [
-      "pilot",
-      "license",
-      "ownerid",
-      "artefacttype",
-      "artefactid"
-    ]
-  },
-  "ArtefactModified": {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "type": "object",
-    "properties": {
-      "ownerid": {
-        "type": "integer"
-      },
-      "artefacttype": {
-        "type": "string"
-      },
-      "artefactid": {
-        "type": "integer"
-      },
-      "usedartefacts": {
-        "type": "string"
-      },
-      "license": {
-        "type": "string"
-      }
-    },
-    "required": [
-      "ownerid",
-      "artefacttype",
-      "artefactid",
-      "license"
-    ]
-  },
-  "ArtefactRated": {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "type": "object",
-    "properties": {
-      "$schema": {
-        "type": "string"
-      },
-      "type": {
-        "type": "string"
-      },
-      "properties": {
-        "type": "object",
-        "properties": {
-          "ownerid": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "type"
-            ]
-          },
-          "artefacttype": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string"
-              }
-            },
-            "required": [
-              "type"
-            ]
-          },
-          "artefactid": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string"
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+	"ArtefactPublished": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"providername": {
+				"type": "string"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"companies": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				}
+			},
+			"license": {
+				"type": "string"
+			},
+			"ownerid": {
+				"type": "string"
+			},
+			"artefacttype": {
+				"type": "string"
+			},
+			"usedartefacts": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				}
+			},
+			"artefactid": {
+				"type": "string"
+			},
+			"artefactname": {
+				"type": "string"
+			}
+		},
+		"required": ["providername",
+		"pilot",
+		"companies",
+		"license",
+		"ownerid",
+		"artefacttype",
+		"artefactid",
+		"artefactname"]
+	},
+	"ArtefactRemoved": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"pilot": {
+				"type": "string"
+			},
+			"license": {
+				"type": "string"
+			},
+			"ownerid": {
+				"type": "string"
+			},
+			"artefacttype": {
+				"type": "string"
+			},
+			"artefactid": {
+				"type": "string"
+			}
+		},
+		"required": ["pilot",
+		"license",
+		"ownerid",
+		"artefacttype",
+		"artefactid"]
+	},
+	"ArtefactModified": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"ownerid": {
+				"type": "string"
+			},
+			"artefacttype": {
+				"type": "string"
+			},
+			"artefactid": {
+				"type": "string"
+			},
+			"usedartefacts": {
+				"type": "string"
+			},
+			"license": {
+				"type": "string"
+			}
+		},
+		"required": ["ownerid",
+		"artefacttype",
+		"artefactid",
+		"license"]
+	},
+	"ArtefactRated": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"artefactid": {
+				"type": "string"
+			},
+			"userid": {
+				"type": "string"
+			},
+			"rate": {
+				"type": "integer"
+			},
+			"artefacttype": {
+				"type": "string"
+			},
+			"artefactname": {
+				"type": "string"
+			}
+		},
+		"required": ["artefactid",
+		"userid",
+		"rate",
+		"artefacttype",
+		"artefactname"]
+	}
 }

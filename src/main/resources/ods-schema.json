@@ -1,0 +1,259 @@
+{
+	"DatasetMetadataAccessed": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"datasetid": {
+				"type": "string"
+			},
+			"datasetname": {
+				"type": "string"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"datasettype": {
+				"type": "string"
+			},
+			"userid": {
+				"type": "string"
+			},
+			"rating": {
+				"type": "number"
+			},
+			"datasetopenness": {
+				"type": "integer"
+			},
+			"datasetopennesreason": {
+				"type": "string"
+			}
+		},
+		"required": ["datasetid",
+		"datasetname",
+		"pilot",
+		"datasettype",
+		"rating"]
+	},
+	"DatasetPublished": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"datasetid": {
+				"type": "string"
+			},
+			"datasetname": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "string"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"datasettype": {
+				"type": "string"
+			},
+			"rating": {
+				"type": "number"
+			},
+			"datasetopenness": {
+				"type": "integer"
+			},
+			"datasetopennesreason": {
+				"type": "string"
+			}
+		},
+		"required": ["datasetid",
+		"datasetname",
+		"authorid",
+		"pilot",
+		"datasettype",
+		"rating"]
+	},
+	"DatasetMetadataUpdated": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"datasetid": {
+				"type": "string"
+			},
+			"datasetname": {
+				"type": "string"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"datasettype": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "string"
+			},
+			"rating": {
+				"type": "number"
+			},
+			"datasetopenness": {
+				"type": "integer"
+			},
+			"datasetopennesreason": {
+				"type": "string"
+			}
+		},
+		"required": ["datasetid",
+		"datasetname",
+		"pilot",
+		"datasettype",
+		"authorid",
+		"rating"]
+	},
+	"DatasetRemoved": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"datasetid": {
+				"type": "string"
+			},
+			"datasetname": {
+				"type": "string"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"datasettype": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "string"
+			},
+			"rating": {
+				"type": "number"
+			},
+			"datasetopenness": {
+				"type": "integer"
+			},
+			"datasetopennesreason": {
+				"type": "string"
+			}
+		},
+		"required": ["datasetid",
+		"datasetname",
+		"pilot",
+		"datasettype",
+		"authorid",
+		"rating"]
+	},
+	"ResourceQueried": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"resourceid": {
+				"type": "string"
+			},
+			"userid": {
+				"type": "string"
+			},
+			"query": {
+				"type": "string"
+			},
+			"resourcetype": {
+				"type": "string"
+			}
+		},
+		"required": ["resourceid",
+		"query"]
+	},
+	"ResourcePublished": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"resourceid": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "string"
+			},
+			"resourcetype": {
+				"type": "string"
+			}
+		},
+		"required": ["resourceid",
+		"authorid"]
+	},
+	"ResourceUpdated": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"resourceid": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "string"
+			},
+			"resourcetype": {
+				"type": "string"
+			}
+		},
+		"required": ["resourceid",
+		"authorid"]
+	},
+	"ResourceRemoved": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"resourceid": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "string"
+			},
+			"resourcetype": {
+				"type": "string"
+			}
+		},
+		"required": ["resourceid",
+		"authorid"]
+	},
+	"ResourceMetadataAccessed": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"resourceid": {
+				"type": "string"
+			},
+			"userid": {
+				"type": "string"
+			},
+			"resourcetype": {
+				"type": "string"
+			}
+		},
+		"required": ["resourceid"]
+	},
+	"ResourceMetadataUpdated": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"resourceid": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "string"
+			},
+			"resourcetype": {
+				"type": "string"
+			}
+		},
+		"required": ["resourceid",
+		"authorid"]
+	},
+	"ComponentSelected": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"componentname": {
+				"type": "string"
+			}
+		},
+		"required": ["componentname"]
+	}
+}
