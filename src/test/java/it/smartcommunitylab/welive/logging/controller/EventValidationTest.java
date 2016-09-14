@@ -2,9 +2,12 @@ package it.smartcommunitylab.welive.logging.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import it.smartcommunitylab.welive.logging.TestConfig;
+import it.smartcommunitylab.welive.logging.model.LogMsg;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,9 +25,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import it.smartcommunitylab.welive.logging.TestConfig;
-import it.smartcommunitylab.welive.logging.model.LogMsg;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -164,7 +164,32 @@ public class EventValidationTest {
 				.content(toJson(playerAccessLogEvent))).andExpect(status().isPreconditionFailed());
 
 	}
+
 	
+	@Test
+	public void failedValidation() throws Exception {
+
+		LogMsg event = new LogMsg();
+		event.setType("ArtefactPublished");
+		Map<String, Object> attrs = new HashMap<String, Object>();
+		attrs.put("ownerid", "owner");
+
+		attrs.put("providername", "owner");
+		attrs.put("pilot", "owner");
+		attrs.put("companies", new ArrayList<>());
+		attrs.put("usedartefacts", new ArrayList<>());
+		attrs.put("license",  new ArrayList<>());
+		attrs.put("artefacttype", "owner");
+		attrs.put("artefactid", "owner");
+		attrs.put("artefactname", "owner");
+		event.setCustomAttributes(attrs );
+
+		mockMvc.perform(post("/log/{appId}", "marketplace").contentType("application/json")
+				.header("Authorization", "Basic " + env.getProperty("logging.basic.token"))
+				.content(toJson(event))).andExpect(status().isPreconditionFailed());
+
+	}
+
 	@Test
 	public void updateSchema() throws Exception {
 
