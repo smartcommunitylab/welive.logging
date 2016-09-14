@@ -1,5 +1,4 @@
 {
-
 	"ArtefactPublished": {
 		"$schema": "http://json-schema.org/draft-04/schema#",
 		"type": "object",
@@ -124,57 +123,4 @@
 		"artefacttype",
 		"artefactname"]
 	}
-=======
-  "ArtefactPublished": {
-    "$schema":"http://json-schema.org/draft-04/schema#",
-    "type":"object",
-    "properties":{
-        "providername":{"type":"string"},
-        "pilot":{"type":"string"},
-        "companies":{"items":{"type":"string"}, "type":"array"},
-        "usedartefacts":{"items":{"type":"string"},"type":"array"},
-        "artefacttype":{"type":"string"},
-        "ownerid":{"type":"string"},
-        "license":{"items":{"type":"string"}, "type":"array"},
-        "artefactid":{"type":"string"},
-        "artefactname":{"type":"string"}
-    },
-    "required":["providername","pilot","companies","license","ownerid","artefacttype","artefactid","artefactname"]
-  },
-  "ArtefactRemoved": {
-    "$schema":"http://json-schema.org/draft-04/schema#",
-    "type":"object",
-    "properties":{
-        "pilot":{"type":"string"},
-        "artefacttype":{"type":"string"},
-        "ownerid":{"type":"string"},
-        "license":{"items":{"type":"string"}, "type":"array"},
-        "artefactid":{"type":"string"}
-    },
-    "required":["pilot","license","ownerid","artefacttype","artefactid"]
-  },
-  "ArtefactModified": {
-    "$schema":"http://json-schema.org/draft-04/schema#",
-    "properties":{
-        "license":{"items":{"type":"string"}, "type":"array"},
-        "usedartefacts":{"items":{"type":"string"},"type":"array"},
-        "artefacttype":{"type":"string"},
-        "ownerid":{"type":"string"},
-        "artefactid":{"type":"string"}
-     },
-    "required":["ownerid","artefacttype","artefactid","license"],
-    "type":"object"},
-  "ArtefactRated": {
-    "$schema":"http://json-schema.org/draft-04/schema#",
-    "properties":{
-        "rate":{"type":"integer"},
-        "userid":{"type":"string"},
-        "artefacttype":{"type":"string"},
-        "artefactid":{"type":"string"},
-        "artefactname":{"type":"string"}
-    },
-    "required":["artefactid","userid","rate","artefacttype","artefactname"],
-    "type":"object"
-  }
->>>>>>> origin/master
 }
