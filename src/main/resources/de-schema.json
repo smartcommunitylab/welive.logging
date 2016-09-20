@@ -78,7 +78,7 @@
 		"type": "object",
 		"properties": {
 			"lon": {
-				"type": "integer"
+				"type": "number"
 			},
 			"recommendedapplist": {
 				"type": "string"
@@ -87,10 +87,10 @@
 				"type": "string"
 			},
 			"radius": {
-				"type": "integer"
+				"type": "number"
 			},
 			"lat": {
-				"type": "integer"
+				"type": "number"
 			}
 		},
 		"required": ["lon",
