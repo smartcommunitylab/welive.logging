@@ -1,0 +1,102 @@
+{
+	"ArtifactPublished": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"artifactid": {
+				"type": "string"
+			},
+			"artifacttype": {
+				"type": "string"
+			}
+		},
+		"required": ["artifactid",
+		"artifacttype"]
+	},
+	"ArtifactRemoved": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"artifactid": {
+				"type": "string"
+			},
+			"artifacttype": {
+				"type": "string"
+			}
+		},
+		"required": ["artifactid",
+		"artifacttype"]
+	},
+	"IdeaPublished": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"ideaid": {
+				"type": "string"
+			}
+		},
+		"required": ["ideaid"]
+	},
+	"ArtifactRecommended": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"sourceartifacttype": {
+				"type": "string"
+			},
+			"recommendedartifactlist": {
+				"type": "string"
+			},
+			"recommendedartifacttype": {
+				"type": "string"
+			},
+			"sourceartifactid": {
+				"type": "string"
+			}
+		},
+		"required": ["sourceartifacttype",
+		"recommendedartifactlist",
+		"recommendedartifacttype",
+		"sourceartifactid"]
+	},
+	"IdeaRecommended": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"sourceideaid": {
+				"type": "string"
+			},
+			"recommendedidealist": {
+				"type": "string"
+			}
+		},
+		"required": ["sourceideaid",
+		"recommendedidealist"]
+	},
+	"UserRecommendation" : {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"lon": {
+				"type": "integer"
+			},
+			"recommendedapplist": {
+				"type": "string"
+			},
+			"userid": {
+				"type": "string"
+			},
+			"radius": {
+				"type": "integer"
+			},
+			"lat": {
+				"type": "integer"
+			}
+		},
+		"required": ["lon",
+		"recommendedapplist",
+		"userid",
+		"radius",
+		"lat"]
+	}
+}
