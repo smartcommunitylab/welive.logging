@@ -166,39 +166,42 @@ public class JsonSchemaValidator {
 				saveLog(msg);
 
 				throw new WeLiveLoggerException(HttpStatus.PRECONDITION_FAILED.value(),
-						"EventType: " + eventType + "Body: " + customAttributes + "Error: " + jpex.getMessage());
+						"EventType: " + eventType + " Body: " + customAttributes + "Error: " + jpex.getMessage());
 
 			} catch (ProcessingException pex) {
 
 				ValidationErrorLogMsg msg = new ValidationErrorLogMsg();
 				msg.setMsg(pex.getMessage());
 				customAttributes.put("type", eventType);
+				customAttributes.put("senderAppId", appId);
 				msg.setCustomAttributes(customAttributes);
 				saveLog(msg);
 
 				throw new WeLiveLoggerException(HttpStatus.PRECONDITION_FAILED.value(),
-						"EventType: " + eventType + "Body: " + customAttributes + "Error: " + pex.getMessage());
+						"EventType: " + eventType + " Body: " + customAttributes + "Error: " + pex.getMessage());
 
 			} catch (IOException e) {
 
 				ValidationErrorLogMsg msg = new ValidationErrorLogMsg();
 				msg.setMsg(e.getMessage());
-				customAttributes.put("eventType", eventType);
+				customAttributes.put("type", eventType);
+				customAttributes.put("senderAppId", appId);
 				msg.setCustomAttributes(customAttributes);
 				saveLog(msg);
 
 				throw new WeLiveLoggerException(HttpStatus.PRECONDITION_FAILED.value(),
-						"EventType: " + eventType + "Body: " + customAttributes + "Error : " + e.getMessage());
+						"EventType: " + eventType + " Body: " + customAttributes + "Error : " + e.getMessage());
 
 			} catch (JSONException e) {
 				ValidationErrorLogMsg msg = new ValidationErrorLogMsg();
 				msg.setMsg(e.getMessage());
-				customAttributes.put("eventType", eventType);
+				customAttributes.put("type", eventType);
+				customAttributes.put("senderAppId", appId);
 				msg.setCustomAttributes(customAttributes);
 				saveLog(msg);
 
 				throw new WeLiveLoggerException(HttpStatus.PRECONDITION_FAILED.value(),
-						"EventType: " + eventType + "Body: " + customAttributes + "Error : " + e.getMessage());
+						"EventType: " + eventType + " Body: " + customAttributes + "Error : " + e.getMessage());
 			}
 		}
 
