@@ -49,6 +49,7 @@ public class JsonSchemaValidator {
 	private final String TYPE_FIELD = "type";
 	private final String APPID_FIELD = "appId";
 	private final String SCHEMA_FIELD = "schema";
+	private final String SENDERAPPID = "senderAppId";
 
 	@Autowired
 	private Logger logManager;
@@ -160,8 +161,8 @@ public class JsonSchemaValidator {
 
 				ValidationErrorLogMsg msg = new ValidationErrorLogMsg();
 				msg.setMsg(jpex.getMessage());
-				customAttributes.put("type", eventType);
-				customAttributes.put("senderAppId", appId);
+				customAttributes.put(TYPE_FIELD, eventType);
+				customAttributes.put(SENDERAPPID, appId);
 				msg.setCustomAttributes(customAttributes);
 				saveLog(msg);
 
@@ -172,8 +173,8 @@ public class JsonSchemaValidator {
 
 				ValidationErrorLogMsg msg = new ValidationErrorLogMsg();
 				msg.setMsg(pex.getMessage());
-				customAttributes.put("type", eventType);
-				customAttributes.put("senderAppId", appId);
+				customAttributes.put(TYPE_FIELD, eventType);
+				customAttributes.put(SENDERAPPID, appId);
 				msg.setCustomAttributes(customAttributes);
 				saveLog(msg);
 
@@ -184,8 +185,8 @@ public class JsonSchemaValidator {
 
 				ValidationErrorLogMsg msg = new ValidationErrorLogMsg();
 				msg.setMsg(e.getMessage());
-				customAttributes.put("type", eventType);
-				customAttributes.put("senderAppId", appId);
+				customAttributes.put(TYPE_FIELD, eventType);
+				customAttributes.put(SENDERAPPID, appId);
 				msg.setCustomAttributes(customAttributes);
 				saveLog(msg);
 
@@ -195,8 +196,8 @@ public class JsonSchemaValidator {
 			} catch (JSONException e) {
 				ValidationErrorLogMsg msg = new ValidationErrorLogMsg();
 				msg.setMsg(e.getMessage());
-				customAttributes.put("type", eventType);
-				customAttributes.put("senderAppId", appId);
+				customAttributes.put(TYPE_FIELD, eventType);
+				customAttributes.put(SENDERAPPID, appId);
 				msg.setCustomAttributes(customAttributes);
 				saveLog(msg);
 
@@ -219,12 +220,13 @@ public class JsonSchemaValidator {
 				ValidationErrorLogMsg msg = new ValidationErrorLogMsg();
 				msg.setMsg(error);
 				customAttributes.put(TYPE_FIELD, eventType);
+				customAttributes.put(SENDERAPPID, appId);
 				msg.setCustomAttributes(customAttributes);
 
 				saveLog(msg);
 
 				throw new WeLiveLoggerException(HttpStatus.PRECONDITION_FAILED.value(),
-						"EventType: " + eventType + "Body: " + customAttributes + "Error. " + error);
+						"EventType: " + eventType + " Body: " + customAttributes + "Error. " + error);
 
 			}
 
