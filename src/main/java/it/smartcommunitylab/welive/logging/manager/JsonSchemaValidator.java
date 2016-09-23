@@ -161,6 +161,7 @@ public class JsonSchemaValidator {
 				ValidationErrorLogMsg msg = new ValidationErrorLogMsg();
 				msg.setMsg(jpex.getMessage());
 				customAttributes.put("type", eventType);
+				customAttributes.put("senderAppId", appId);
 				msg.setCustomAttributes(customAttributes);
 				saveLog(msg);
 
