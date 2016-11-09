@@ -1,0 +1,278 @@
+{
+	"IdeaInImplementation": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"ideaid": {
+				"type": "number"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "number"
+			},
+			"ideatitle": {
+				"type": "string"
+			},
+			"collaboratorsid": {
+				"type": "array",
+				"items": {
+					"type": "number"
+				}
+			}
+		},
+		"required": ["ideaid",
+		"pilot",
+		"authorid",
+		"ideatitle",
+		"collaboratorsid"]
+	},
+	"IdeaPublished": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"ideaid": {
+				"type": "number"
+			},
+			"ideatitle": {
+				"type": "string"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "number"
+			},
+			"collaboratorsid": {
+				"type": "array",
+				"items": {
+					"type": "number"
+				}
+			},
+			"categories": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				}
+			},
+			"challengeid": {
+				"type": "number"
+			},
+			"needid": {
+				"type": "number"
+			}
+		},
+		"required": ["ideaid",
+		"ideatitle",
+		"pilot",
+		"authorid",
+		"collaboratorsid",
+		"categories"]
+	},
+	"NeedPublished": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"needid": {
+				"type": "number"
+			},
+			"needtitle": {
+				"type": "string"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"authorid": {
+				"type": "number"
+			},
+			"collaboratorsid": {
+				"type": "array",
+				"items": {
+					"type": "number"
+				}
+			}
+		},
+		"required": ["needid",
+		"needtitle",
+		"pilot",
+		"authorid",
+		"collaboratorsid"]
+	},
+	"IdeaModified": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"ideaid": {
+				"type": "number"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"usersid": {
+				"type": "array",
+				"items": {
+					"type": "number"
+				}
+			},
+			"challengeid": {
+				"type": "number"
+			}
+		},
+		"required": ["ideaid",
+		"pilot",
+		"usersid"]
+	},
+	"NeedModified": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"needid": {
+				"type": "number"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"usersid": {
+				"type": "array",
+				"items": {
+					"type": "number"
+				}
+			}
+		},
+		"required": ["needid",
+		"pilot",
+		"usersid"]
+	},
+	"IdeaRemoved": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"ideaid": {
+				"type": "number"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"usersid": {
+				"type": "array",
+				"items": {
+					"type": "number"
+				}
+			},
+			"challengeid": {
+				"type": "number"
+			}
+		},
+		"required": ["ideaid",
+		"pilot",
+		"usersid"]
+	},
+	"NeedRemoved": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"needid": {
+				"type": "number"
+			},
+			"pilot": {
+				"type": "string"
+			},
+			"usersid": {
+				"type": "array",
+				"items": {
+					"type": "number"
+				}
+			}
+		},
+		"required": ["needid",
+		"pilot",
+		"usersid"]
+	},
+	"ChallengePublished": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"challengeid": {
+				"type": "number"
+			},
+			"authorityname": {
+				"type": "string"
+			},
+			"pilot": {
+				"type": "string"
+			}
+		},
+		"required": ["challengeid",
+		"pilot"]
+	},
+	"ChallengeRemoved": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"challengeid": {
+				"type": "number"
+			},
+			"authorityname": {
+				"type": "string"
+			},
+			"pilot": {
+				"type": "string"
+			}
+		},
+		"required": ["challengeid",
+		"pilot"]
+	},
+	"IdeaRated": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"ideaid": {
+				"type": "number"
+			},
+			"userid": {
+				"type": "number"
+			},
+			"rate": {
+				"type": "integer"
+			},
+			"ideatitle": {
+				"type": "string"
+			},
+			"ideaurl": {
+				"type": "string"
+			}
+		},
+		"required": ["ideaid",
+		"userid",
+		"rate",
+		"ideatitle",
+		"ideaurl"]
+	},
+	"NeedRated": {
+		"$schema": "http://json-schema.org/draft-04/schema#",
+		"type": "object",
+		"properties": {
+			"needid": {
+				"type": "number"
+			},
+			"userid": {
+				"type": "number"
+			},
+			"rate": {
+				"type": "integer"
+			},
+			"needtitle": {
+				"type": "string"
+			},
+			"needurl": {
+				"type": "string"
+			}
+		},
+		"required": ["needid",
+		"userid",
+		"rate",
+		"needtitle",
+		"needurl"]
+	}
+}
