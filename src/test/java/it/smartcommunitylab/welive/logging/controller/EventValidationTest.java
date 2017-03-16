@@ -1,5 +1,6 @@
 package it.smartcommunitylab.welive.logging.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import it.smartcommunitylab.welive.logging.TestConfig;
@@ -20,7 +21,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -223,6 +226,16 @@ public class EventValidationTest {
 				.content(toJson(testSchema))).andExpect(status().isPreconditionFailed());
 		
 
+	}
+	
+	@Test
+	public void readSchema() throws Exception {
+
+		String schema = mockMvc.perform(get("/log/read/schema/{appId}", appId)
+				.header("Authorization", "Basic " + env.getProperty("logging.basic.token"))).andReturn().getResponse().getContentAsString();
+		System.err.println(schema);
+		Assert.isTrue(!schema.isEmpty());
+	
 	}
 
 	private String readFile(String name) {

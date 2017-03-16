@@ -16,7 +16,7 @@
 package it.smartcommunitylab.welive.logging;
 
 import it.smartcommunitylab.welive.logging.manager.AccessControlManager;
-import it.smartcommunitylab.welive.logging.manager.JsonSchemaValidator;
+import it.smartcommunitylab.welive.logging.manager.JsonSchemaManager;
 import it.smartcommunitylab.welive.logging.manager.Logger;
 import it.smartcommunitylab.welive.logging.manager.MockLogger;
 
@@ -52,8 +52,8 @@ public class TestConfig {
 		return new AccessControlManager();
 	}
 	@Bean
-	public JsonSchemaValidator jsonSchemaValidator() {
-		return new JsonSchemaValidator();
+	public JsonSchemaManager jsonSchemaManager() {
+		return new JsonSchemaManager();
 	}
 	
 	@Bean

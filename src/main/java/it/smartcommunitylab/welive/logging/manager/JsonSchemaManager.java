@@ -1,9 +1,5 @@
 package it.smartcommunitylab.welive.logging.manager;
 
-import it.smartcommunitylab.welive.exception.WeLiveLoggerException;
-import it.smartcommunitylab.welive.logging.model.LogMsg;
-import it.smartcommunitylab.welive.logging.model.ValidationErrorLogMsg;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,6 +7,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -20,10 +17,12 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.expression.common.TemplateAwareExpressionParser;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.exceptions.ProcessingException;
@@ -38,8 +37,12 @@ import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.util.JSON;
 
+import it.smartcommunitylab.welive.exception.WeLiveLoggerException;
+import it.smartcommunitylab.welive.logging.model.LogMsg;
+import it.smartcommunitylab.welive.logging.model.ValidationErrorLogMsg;
+
 @Component
-public class JsonSchemaValidator {
+public class JsonSchemaManager {
 
 	private ObjectMapper mapper = new ObjectMapper();
 
@@ -126,7 +129,7 @@ public class JsonSchemaValidator {
 		BasicDBObject whereQuery = new BasicDBObject();
 		whereQuery.put(TYPE_FIELD, key);
 		whereQuery.put(APPID_FIELD, appId);
-		
+
 		DBCursor cursor = collection.find(whereQuery);
 		if (cursor.hasNext()) {
 			return true;
@@ -139,7 +142,7 @@ public class JsonSchemaValidator {
 		ProcessingReport report = null;
 		boolean result = false;
 		Map<String, Object> customAttributes = new HashMap<String, Object>();
-		
+
 		if (logMsg.getCustomAttributes() != null) {
 			for (String a : logMsg.getCustomAttributes().keySet()) {
 				customAttributes.put(a.toLowerCase(), logMsg.getCustomAttributes().get(a));
@@ -151,7 +154,7 @@ public class JsonSchemaValidator {
 		if (schemaCache.has(getCacheKey(appId, eventType))) {
 			try {
 
-				JsonNode schemaNode = JsonLoader.fromString(schemaCache.getString(getCacheKey(appId,eventType)));
+				JsonNode schemaNode = JsonLoader.fromString(schemaCache.getString(getCacheKey(appId, eventType)));
 				JsonNode data = mapper.convertValue(customAttributes, JsonNode.class);
 				JsonSchemaFactory factory = JsonSchemaFactory.byDefault();
 				JsonSchema schema = factory.getJsonSchema(schemaNode);
@@ -264,7 +267,7 @@ public class JsonSchemaValidator {
 	public void updateCache(String appId, String type, String schema) throws WeLiveLoggerException {
 
 		JSONObject data = mapper.convertValue(JSON.parse(schema).toString(), JSONObject.class);
-		
+
 		try {
 			// update mongo
 			updateDB(appId, type, data);
@@ -282,25 +285,38 @@ public class JsonSchemaValidator {
 		whereQuery.put(APPID_FIELD, appId);
 		DBCursor cursor = collection.find(whereQuery);
 		try {
-		if (cursor.hasNext()) {
-			DBObject temp = cursor.next();
-			temp.put(SCHEMA_FIELD, schema.get(type).toString());
-			collection.save(temp);
-		} else {
-			DBObject newSchema = new BasicDBObject();
-			newSchema.put(TYPE_FIELD, type);
-			newSchema.put(APPID_FIELD, appId);
-			newSchema.put(SCHEMA_FIELD, schema.get(type).toString());
-			collection.save(newSchema);
-		}
+			if (cursor.hasNext()) {
+				DBObject temp = cursor.next();
+				temp.put(SCHEMA_FIELD, schema.get(type).toString());
+				collection.save(temp);
+			} else {
+				DBObject newSchema = new BasicDBObject();
+				newSchema.put(TYPE_FIELD, type);
+				newSchema.put(APPID_FIELD, appId);
+				newSchema.put(SCHEMA_FIELD, schema.get(type).toString());
+				collection.save(newSchema);
+			}
 		} catch (JSONException e) {
 			throw new WeLiveLoggerException(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
 		}
 	}
 
+	public String readSchema(String appId) {
+		List<String> schema = new ArrayList<String>();
+		BasicDBObject whereQuery = new BasicDBObject();
+		whereQuery.put(APPID_FIELD, appId);
+		DBCursor cursor = collection.find(whereQuery);
+		if (cursor.hasNext()) {
+			DBObject temp = cursor.next();
+			schema.add(temp.toString());
+		}
+		return schema.toString();
+
+	}
+
 	public static void main(String[] args) throws WeLiveLoggerException, JSONException {
 		// System.out.println("Starting Json Validation.");
-		JsonSchemaValidator jsonSchemaValidator = new JsonSchemaValidator();
+		JsonSchemaManager jsonSchemaValidator = new JsonSchemaManager();
 
 		// player access.
 		LogMsg playerAccessLogEvent = new LogMsg();
