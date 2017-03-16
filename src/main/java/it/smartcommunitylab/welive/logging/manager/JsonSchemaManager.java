@@ -305,7 +305,9 @@ public class JsonSchemaManager {
 		List<String> schema = new ArrayList<String>();
 		BasicDBObject whereQuery = new BasicDBObject();
 		whereQuery.put(APPID_FIELD, appId);
-		DBCursor cursor = collection.find(whereQuery);
+		BasicDBObject fields = new BasicDBObject();
+		fields.put("_id", 0);
+		DBCursor cursor = collection.find(whereQuery, fields);
 		while (cursor.hasNext()) {
 			DBObject temp = cursor.next();
 			schema.add(temp.toString());
