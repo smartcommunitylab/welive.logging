@@ -238,16 +238,13 @@
 			},
 			"ideatitle": {
 				"type": "string"
-			},
-			"ideaurl": {
-				"type": "string"
 			}
 		},
 		"required": ["ideaid",
 		"userid",
 		"rate",
-		"ideatitle",
-		"ideaurl"]
+		"ideatitle"
+		]
 	},
 	"NeedRated": {
 		"$schema": "http://json-schema.org/draft-04/schema#",
@@ -264,15 +261,12 @@
 			},
 			"needtitle": {
 				"type": "string"
-			},
-			"needurl": {
-				"type": "string"
 			}
 		},
 		"required": ["needid",
 		"userid",
 		"rate",
-		"needtitle",
-		"needurl"]
+		"needtitle"
+		]
 	}
 }
