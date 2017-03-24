@@ -85,19 +85,12 @@
 			},
 			"authorid": {
 				"type": "number"
-			},
-			"collaboratorsid": {
-				"type": "array",
-				"items": {
-					"type": "number"
-				}
 			}
 		},
 		"required": ["needid",
 		"needtitle",
 		"pilot",
-		"authorid",
-		"collaboratorsid"]
+		"authorid"]
 	},
 	"IdeaModified": {
 		"$schema": "http://json-schema.org/draft-04/schema#",
