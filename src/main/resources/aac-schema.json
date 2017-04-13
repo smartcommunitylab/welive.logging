@@ -31,6 +31,22 @@
       "userid"
     ]
   },
+  "UserDeleted": {
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "cascade": {
+        "type": "string"
+      },
+      "userid": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "cascade",
+      "userid"
+    ]
+  },
   "UserExtraInfo": {
     "$schema": "http://json-schema.org/draft-04/schema#",
     "type": "object",
