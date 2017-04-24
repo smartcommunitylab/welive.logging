@@ -108,7 +108,6 @@ public class WrapperController {
 			@RequestHeader(required = false, name = "Authorization") String token)
 			throws Exception {
 
-		accessControl.checkAccess(token);
 		return jsonSchemaManager.readSchema(appId);
 
 	}
